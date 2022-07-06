@@ -1,0 +1,9 @@
+main.c
+valgrind-out.txt
+VLC.sh
+output.txt
+*.a
+*.dll
+SDL2/
+build-win/
+build-linux/
