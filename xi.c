@@ -40,7 +40,7 @@ void program_state_deinit(program_state* state){
 void xi_init(program_state* state){
 	state->state = XI_STATE_INIT;
 	srand(time(NULL));
-	loadFont(&state->graphics, "template/fnt/arcade.TTF", "default");
+	loadFont(&state->graphics, "../fnt/arcade.TTF", "default");
 	setFont(&state->graphics, "default");
 	view v = {
 		0,        0,

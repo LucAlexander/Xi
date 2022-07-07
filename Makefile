@@ -17,32 +17,45 @@ project:
 compile-linux:
 	rm -rf $(BUILDLINUX)
 	mkdir $(BUILDLINUX)
+	mkdir $(BUILDLINUX)./bin/
 	$(CC) $(wildcard *.h) $(wildcard *.c) $(USER_FILES) $(CFLAGS) -o $(OUT)
-	mv $(OUT) $(BUILDLINUX)
+	mv $(OUT) $(BUILDLINUX)./bin/
+	cp -r projects/$(PROJECT)/fnt/ $(BUILDLINUX)
+	cp -r projects/$(PROJECT)/spr/ $(BUILDLINUX)
 
 debug-linux:
 	rm -rf $(BUILDLINUX)
 	mkdir $(BUILDLINUX)
+	mkdir $(BUILDLINUX)./bin/
 	$(CC) $(wildcard *.h) $(wildcard *.c) $(USER_FILES) $(CFLAGS) $(CDEBUGFLAGS) -o $(OUT)-debug
-	mv $(OUT)-debug $(BUILDLINUX)
+	mv $(OUT)-debug $(BUILDLINUX)./bin/
+	cp -r projects/$(PROJECT)/fnt/ $(BUILDLINUX)
+	cp -r projects/$(PROJECT)/spr/ $(BUILDLINUX)
 
 compile-win:
 	rm -rf $(BUILDWIN)
 	mkdir $(BUILDWIN)
+	mkdir $(BUILDWIN)./bin/
 	$(CCWIN) $(wildcard *.h) $(wildcard *.c) $(USER_FILES) $(WINLIBS) $(WINFLAGS) $(CFLAGS) -o $(OUT).exe
-	mv $(OUT).exe $(BUILDWIN)
-	cp SDL2_image.dll $(BUILDWIN)
-	cp SDL2.dll $(BUILDWIN)
-	cp SDL2_ttf.dll $(BUILDWIN)
+	mv $(OUT).exe $(BUILDWIN)./bin/
+	cp SDL2_image.dll $(BUILDWIN)./bin/
+	cp SDL2.dll $(BUILDWIN)./bin/
+	cp SDL2_ttf.dll $(BUILDWIN)./bin/
+	cp -r projects/$(PROJECT)/fnt/ $(BUILDWIN)
+	cp -r projects/$(PROJECT)/spr/ $(BUILDWIN)
 
 debug-win:
 	rm -rf $(BUILDWIN)
 	mkdir $(BUILDWIN)
+	mkdir $(BUILDWIN)./bin/
 	$(CCWIN) $(wildcard *.h) $(wildcard *.c) $(USER_FILES) $(WINLIBS) $(WINFLAGS) $(CFLAGS) $(CDEBUGFLAGS) -o $(OUT)-debug.exe
-	mv $(OUT)-debug.exe $(BUILDWIN)
-	cp SDL2_image.dll $(BUILDWIN)
-	cp SDL2.dll $(BUILDWIN)
-	cp SDL2_ttf.dll $(BUILDWIN)
+	mv $(OUT)-debug.exe $(BUILDWIN)./bin/
+	cp SDL2_image.dll $(BUILDWIN)./bin/
+	cp SDL2.dll $(BUILDWIN)./bin/
+	cp SDL2_ttf.dll $(BUILDWIN)./bin/
+	cp -r projects/$(PROJECT)/fnt/ $(BUILDWIN)
+	cp -r projects/$(PROJECT)/spr/ $(BUILDWIN)
+
 
 compile-all:
 	make compile-linux
