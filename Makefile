@@ -8,7 +8,7 @@ OUT=xiprog
 BUILDWIN=build-win/
 BUILDLINUX=build-linux/
 
-PROJECT=first
+PROJECT=demo
 USER_FILES=$(wildcard projects/$(PROJECT)/src/*.h) $(wildcard projects/$(PROJECT)/src/*.c)
 
 project:

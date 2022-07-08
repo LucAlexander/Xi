@@ -1,0 +1,15 @@
+#ifndef XI_COMPONENTS_H
+#define XI_COMPONENTS_H
+
+#define STD_COMPONENTS\
+	POSITION_C,/*v2*/\
+	FORCES_C,/*v2*/\
+	BLITABLE_C/*Blitable*/
+
+typedef enum STD_COMPONENTS_MOC{
+	POSITION_C_MOC,
+	FORCES_C_MOC,
+	BLITABLE_C_MOC
+}STD_COMPONENTS_MOC;
+
+#endif

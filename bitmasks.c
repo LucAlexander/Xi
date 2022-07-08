@@ -132,3 +132,29 @@ void maskDisplay(vu64_t* mask){
 	}	
 	printf("\n");
 }
+
+bitmask_iterator bitmask_iterator_init(vu64_t* mask){
+	bitmask_iterator it;
+	it.mask = mask;
+	it.bit = -1;
+	bitmask_iterator_next(&it);
+	return it;
+}
+
+uint8_t bitmask_iterator_has_next(bitmask_iterator* it){
+	return it->bit != -1;
+}
+
+uint32_t bitmask_iterator_next(bitmask_iterator* it){
+	int32_t bit = it->bit;
+	uint32_t i, n = it->mask->size*64;
+	for (i = it->bit+1;i<n;++i){
+		if (maskContainsBit(it->mask, i)){
+			it->bit = i;
+			return bit;
+		}
+	}
+	it->bit = -1;
+	return bit;
+}
+

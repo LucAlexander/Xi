@@ -8,18 +8,20 @@
 VECTOR(vec_t, void*)
 VECTOR(mat_t, vec_t)
 
+VECTOR(qu32_t, uint32_t)
+HASHMAP(mu32_mask, uint32_t, uint64_t)
+HASHMAP(mu32_u32, uint32_t, uint32_t)
+
 typedef struct archetype_v2{
 	vu64_t mask;
+	mu32_u32 bit2index;
 	mat_t data;
 	vu32_t ids;
 }archetype_v2;
 
-void freeArchetype(archetype_v2* e);
-
 VECTOR(varch_t, archetype_v2)
-VECTOR(qu32_t, uint32_t)
-HASHMAP(mu32_mask, uint32_t, uint64_t)
-HASHMAP(mu32_u32, uint32_t, uint32_t)
+
+void freeArchetype(archetype_v2* e);
 
 typedef enum ENTITY_FLAGS{
 	ENTITY_DEACTIVATED=1

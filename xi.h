@@ -40,6 +40,13 @@ typedef struct program_state{
 	struct mem_arena* arena;
 }program_state;
 
+typedef struct xi_utils{
+	GraphicsHandler* graphics;
+	input* user_input;
+	entity_data* ecs;
+	struct mem_arena* arena;
+}xi_utils;
+
 void program_state_init(program_state* state);
 void program_state_deinit(program_state* state);
 
@@ -57,6 +64,9 @@ uint32_t frame_time(program_state* state);
 
 void do_frame_try(program_state* state);
 void read_user_input(program_state* state);
+
+void std_systems(program_state* state);
+void system_add(program_state* state, struct system_t, PROGRAM_STATE);
 
 void xisetup(program_state*);
 void xistart(program_state*);

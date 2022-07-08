@@ -29,6 +29,7 @@ void addDefaultArchetype(entity_data* data){
 	def.mask = createMask(0);
 	def.data = mat_tInit();
 	def.ids = vu32_tInit();
+	def.bit2index = mu32_u32Init();
 	varch_tPushBack(&data->archetypes, def);
 }
 
@@ -54,6 +55,7 @@ void freeArchetype(archetype_v2* e){
 	mat_tFree(&e->data);
 	vu64_tFree(&e->mask);
 	vu32_tFree(&e->ids);
+	mu32_u32Free(&e->bit2index);
 }
 
 uint32_t form_entity(entity_data* data){
@@ -66,7 +68,7 @@ uint32_t form_entity(entity_data* data){
 	}
 	vu32_tPushBack(&def->ids, id);
 	mu32_u32Push(&data->ent2arch, id, 0);
-	mu32_u32Push(&data->ent2layer, id, -1);
+	mu32_u32Push(&data->ent2layer, id, 0);
 	if (!mu32_maskContains(&data->masks, id)){
 		mu32_maskPush(&data->masks, id, 0);
 		return id;
@@ -178,6 +180,12 @@ void swapToNewArchetype(mu32_u32* ent2arch, varch_t* archetypes, archetype_v2* a
 	newarc.mask = newmask;
 	newarc.data = mat_tInit();
 	newarc.ids = vu32_tInit();
+	newarc.bit2index = mu32_u32Init();
+	bitmask_iterator it = bitmask_iterator_init(&newarc.mask);
+	uint32_t i = 0;
+	while (bitmask_iterator_has_next(&it)){
+		mu32_u32Push(&newarc.bit2index, bitmask_iterator_next(&it), i++);
+	}
 	mat_tPushBack(&newarc.data, mat_tRemove(&arch->data, index));
 	uint32_t eid = vu32_tRemove(&arch->ids, index);
 	vu32_tPushBack(&newarc.ids, eid);

@@ -3,6 +3,10 @@
 
 #include "xi.h"
 #include "xi_config.h"
+
+#include "xi_components.h"
+#include "xi_systems.h"
+
 #include "memarena.h"
 #include "systems.h"
 
@@ -48,7 +52,7 @@ void xi_init(program_state* state){
 		WINDOW_W, WINDOW_H
 	};
 	renderSetView(&state->graphics, v);
-	//TODO system registry
+	std_systems(state);
 	xisetup(state);
 	xistart(state);
 }
@@ -62,12 +66,30 @@ void xi_purge(program_state* state){
 	purge(&state->ecs);
 }
 
+void system_add(program_state* state, system_t system, PROGRAM_STATE software_state){
+	if (software_state >= XI_SYSTEM_STATE_COUNT){
+		return;
+	}
+	vsys_tPushBack(&state->system_group[software_state], system);
+}
+
+void std_systems(program_state* state){
+	system_add(state, system_init(forces_s, 2, POSITION_C_MOC, FORCES_C_MOC), XI_STATE_UPDATE);
+	system_add(state, system_init(blitable_s, 2, POSITION_C_MOC, BLITABLE_C_MOC), XI_STATE_RENDER);
+}
+
 void xi_run_system_group(program_state* state, uint32_t group, int32_t layer){
 	state->state = group;
 	uint32_t i;
 	vsys_t system_list = state->system_group[group];
+	xi_utils xi = {
+		&state->graphics,
+		&state->user_input,
+		&state->ecs,
+		state->arena
+	};
 	for (i = 0;i<system_list.size;++i){
-		system_run(vsys_tRef(&system_list, i), &state->ecs, layer);
+		system_run(vsys_tRef(&system_list, i), &xi, layer);
 	}
 }
 

@@ -18,4 +18,13 @@ vu64_t maskCopy(vu64_t* mask);
 void maskDisplay(vu64_t* mask);
 void maskChunkDisplay(uint64_t chunk);
 
+typedef struct bitmask_iterator{
+	vu64_t* mask;
+	int64_t bit;
+}bitmask_iterator;
+
+bitmask_iterator bitmask_iterator_init(vu64_t* mask);
+uint8_t bitmask_iterator_has_next(bitmask_iterator*);
+uint32_t bitmask_iterator_next(bitmask_iterator*);
+
 #endif

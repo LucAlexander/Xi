@@ -1,8 +1,8 @@
 #include "systems.h"
-#include "entities.h"
 #include "cflags.h"
+#include "xi.h"
 
-system_t system_init(void f(entity_data*, uint32_t, vec_t*), uint32_t n, ...){
+system_t system_init(void f(SYSTEM_ARG_REQUIREMENTS), uint32_t n, ...){
 	system_t sys;
 	sys.mask = vu64_tInit();
 	sys.filter = 0;
@@ -63,21 +63,26 @@ uint8_t system_filter(system_t* sys, uint64_t targetFlag){
 	return ((((targetFlag & sys->filter) != sys->filter) || (sys->filter==0)) && (((targetFlag & sys->magnet) ==sys->magnet) || (sys->magnet==0)));
 }
 
-uint8_t system_layer_check(uint32_t layer, entity_data* medium, uint32_t eid){
+uint8_t system_layer_check(int32_t layer, entity_data* medium, uint32_t eid){
 	return (layer == -1) || (layer == mu32_u32Get(&medium->ent2layer, eid).val);
 }
 
-void system_run(system_t* sys, entity_data* medium, uint32_t layer){
-	uint32_t archetype, entity;
-	for (archetype = 0;archetype<medium->archetypes.size;++archetype){
-		archetype_v2* arch = varch_tRefTrusted(&medium->archetypes, archetype);
+void system_run(system_t* sys, xi_utils* xi, int32_t layer){
+	uint32_t archetype;
+	for (archetype = 0;archetype<xi->ecs->archetypes.size;++archetype){
+		archetype_v2* arch = varch_tRefTrusted(&xi->ecs->archetypes, archetype);
 		if (maskCompare(&sys->mask, &arch->mask)){
-			for (entity = 0;entity<arch->data.size;++entity){
-				uint32_t eid = vu32_tGet(&arch->ids, entity);
-				if (system_filter(sys, mu32_maskGet(&medium->masks, eid).val)&&system_layer_check(layer, medium, eid)){
-					sys->func(medium, vu32_tGet(&arch->ids, entity), (vec_t*)mat_tRef(&arch->data, entity));
-				}
-			}
+			system_run_archetype(sys, arch, xi, layer);
+		}
+	}
+}
+
+void system_run_archetype(system_t* sys, archetype_v2* arch, xi_utils* xi, int32_t layer){
+	uint32_t entity;
+	for (entity = 0;entity<arch->data.size;++entity){
+		uint32_t eid = vu32_tGet(&arch->ids, entity);
+		if (system_filter(sys, mu32_maskGet(&xi->ecs->masks, eid).val)&&system_layer_check(layer, xi->ecs, eid)){
+			sys->func(xi, vu32_tGet(&arch->ids, entity), (vec_t*)mat_tRef(&arch->data, entity), &arch->bit2index);
 		}
 	}
 }
