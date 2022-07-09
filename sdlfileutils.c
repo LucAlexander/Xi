@@ -14,6 +14,9 @@ SDL_Surface* loadImage(fileLoader* loader, const char* src){
 		return item;
 	}
 	item = IMG_Load(src);
+	if (item == NULL){
+		printf("[!] Unable to load image from file \'%s\'\n%s\n", src, SDL_GetError());
+	}
 	TextureMapPush(&(loader->textures), src, item);
 	return item;
 }

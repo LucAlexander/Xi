@@ -38,9 +38,7 @@ compile-win:
 	mkdir $(BUILDWIN)./bin/
 	$(CCWIN) $(wildcard *.h) $(wildcard *.c) $(USER_FILES) $(WINLIBS) $(WINFLAGS) $(CFLAGS) -o $(OUT).exe
 	mv $(OUT).exe $(BUILDWIN)./bin/
-	cp SDL2_image.dll $(BUILDWIN)./bin/
-	cp SDL2.dll $(BUILDWIN)./bin/
-	cp SDL2_ttf.dll $(BUILDWIN)./bin/
+	cp $(wildcard *.dll) $(BUILDWIN)./bin/
 	cp -r projects/$(PROJECT)/fnt/ $(BUILDWIN)
 	cp -r projects/$(PROJECT)/spr/ $(BUILDWIN)
 
@@ -50,9 +48,7 @@ debug-win:
 	mkdir $(BUILDWIN)./bin/
 	$(CCWIN) $(wildcard *.h) $(wildcard *.c) $(USER_FILES) $(WINLIBS) $(WINFLAGS) $(CFLAGS) $(CDEBUGFLAGS) -o $(OUT)-debug.exe
 	mv $(OUT)-debug.exe $(BUILDWIN)./bin/
-	cp SDL2_image.dll $(BUILDWIN)./bin/
-	cp SDL2.dll $(BUILDWIN)./bin/
-	cp SDL2_ttf.dll $(BUILDWIN)./bin/
+	cp $(wildcard *.dll) $(BUILDWIN)./bin/
 	cp -r projects/$(PROJECT)/fnt/ $(BUILDWIN)
 	cp -r projects/$(PROJECT)/spr/ $(BUILDWIN)
 

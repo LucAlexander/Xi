@@ -62,7 +62,7 @@ void handlerRenderViewInit(GraphicsHandler* ghandle){
 SDL_Texture* getTexture(GraphicsHandler* ghandle, const char* src){
 	SDL_Texture* item = SDL_CreateTextureFromSurface(ghandle->renderer, loadImage(&ghandle->floader, src));
 	if (item == NULL){
-		printf("[!] Unable to load image \'%s\'\n",src);
+		printf("[!] Unable to construct image from file \'%s\'\n%s\n",src, SDL_GetError());
 	}
 	vecT_tPushBack(&ghandle->texture_arena, item);
 	return item;
@@ -324,6 +324,7 @@ void fontHandlerInit(GraphicsHandler* ghandle){
 void loadFont(GraphicsHandler* ghandle, const char* src, const char* name){
 	TTF_Font* f = FontMapGet(&(ghandle->fonts.list), name).val;
 	if (f != NULL){
+		printf("[!] Unable to load font \'%s\'\n%s\n", src, SDL_GetError());
 		return;
 	}
 	f = TTF_OpenFont(src, 16);
