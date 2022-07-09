@@ -12,6 +12,7 @@
 
 struct system_t;
 struct mem_arena;
+struct project_structs;
 
 VECTOR(vsys_t, struct system_t)
 
@@ -38,6 +39,7 @@ typedef struct program_state{
 	input user_input;
 	entity_data ecs;
 	struct mem_arena* arena;
+	struct project_structs* project;
 }program_state;
 
 typedef struct xi_utils{
@@ -45,6 +47,7 @@ typedef struct xi_utils{
 	input* user_input;
 	entity_data* ecs;
 	struct mem_arena* arena;
+	struct project_structs* project;
 }xi_utils;
 
 void program_state_init(program_state* state);

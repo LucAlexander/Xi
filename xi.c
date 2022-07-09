@@ -25,6 +25,7 @@ void program_state_init(program_state* state){
 	inputInit(&state->user_input);
 	entity_data_init(&state->ecs);
 	allocate_arena(state);
+	state->project = NULL;
 }
 
 void program_state_deinit(program_state* state){
@@ -39,6 +40,8 @@ void program_state_deinit(program_state* state){
 	graphicsClose(&state->graphics);
 	entity_data_free(&state->ecs);
 	mem_arena_dealloc(state->arena);
+	free(state->project);
+	state->project = NULL;
 }
 
 xi_utils construct_xi_utils(program_state* state){
@@ -46,7 +49,8 @@ xi_utils construct_xi_utils(program_state* state){
 		&state->graphics,
 		&state->user_input,
 		&state->ecs,
-		state->arena
+		state->arena,
+		state->project
 	};
 	return xi;
 }
