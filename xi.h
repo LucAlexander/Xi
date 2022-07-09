@@ -70,6 +70,9 @@ xi_utils construct_xi_utils(program_state*);
 void std_systems(program_state* state);
 void system_add(program_state* state, struct system_t, PROGRAM_STATE);
 
+void allocate_arena(program_state* state);
+void reset_arena(program_state* state);
+
 void xisetup(xi_utils*);
 void xistart(xi_utils*);
 

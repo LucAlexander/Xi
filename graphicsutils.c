@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 HASHMAP_SOURCE(FontMap, const char*, TTF_Font*, hashS)
+VECTOR_SOURCE(vecT_t, SDL_Texture*)
 
 void graphicsInit(GraphicsHandler* ghandle, uint16_t width, uint16_t height, const char* windowTitle){
 	ghandle->renderScale = RENDER_SCALE_NEAREST;
@@ -16,6 +17,7 @@ void graphicsInit(GraphicsHandler* ghandle, uint16_t width, uint16_t height, con
 	ghandle->windowH = 1080;
 	ghandle->spriteScaleX = 1;
 	ghandle->spriteScaleY = 1;
+	ghandle->texture_arena = vecT_tInit();
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
 	if (ghandle->window != NULL){
@@ -35,6 +37,8 @@ void graphicsInit(GraphicsHandler* ghandle, uint16_t width, uint16_t height, con
 }
 
 void graphicsClose(GraphicsHandler* ghandle){
+	texture_arena_release(ghandle);
+	vecT_tFree(&ghandle->texture_arena);
 	fontHandlerClose(ghandle);
 	fileLoaderClose(&ghandle->floader);
 	TTF_Quit();
@@ -60,6 +64,7 @@ SDL_Texture* getTexture(GraphicsHandler* ghandle, const char* src){
 	if (item == NULL){
 		printf("[!] Unable to load image \'%s\'\n",src);
 	}
+	vecT_tPushBack(&ghandle->texture_arena, item);
 	return item;
 }
 
@@ -414,4 +419,11 @@ uint32_t getTextHeight(GraphicsHandler* ghandle, const char* c){
 
 void queryTextSize(GraphicsHandler* ghandle, const char* text, int32_t* w, int32_t* h){
 	TTF_SizeText(ghandle->fonts.fnt, text, w, h);
+}
+
+void texture_arena_release(GraphicsHandler* ghandle){
+	uint32_t i;
+	for (i = 0;i<ghandle->texture_arena.size;++i){
+		SDL_DestroyTexture(vecT_tGet(&ghandle->texture_arena, i));
+	}
 }

@@ -24,7 +24,7 @@ void program_state_init(program_state* state){
 	graphicsInit(&state->graphics, WINDOW_W, WINDOW_H, WINDOW_TITLE);
 	inputInit(&state->user_input);
 	entity_data_init(&state->ecs);
-	state->arena = mem_arena_alloc(MEM_POOL_INITIAL, MEM_POOL_RESIZE, MEM_POOL_RESIZE_COUNT);
+	allocate_arena(state);
 }
 
 void program_state_deinit(program_state* state){
@@ -149,7 +149,6 @@ void do_frame_try(program_state* state){
 	tick_reset(state);
 }
 
-
 void read_user_input(program_state* state){
 	switch (state->event.type){
 		case SDL_QUIT:
@@ -178,6 +177,16 @@ void read_user_input(program_state* state){
 			mouseMoveEvent(&state->user_input, state->event.motion.x, state->event.motion.y);
 			return;
 	}
+}
+
+void allocate_arena(program_state* state){
+	state->arena = mem_arena_alloc(MEM_POOL_INITIAL, MEM_POOL_RESIZE, MEM_POOL_RESIZE_COUNT);
+}
+
+void reset_arena(program_state* state){
+	mem_arena_dealloc(state->arena);
+	texture_arena_release(&state->graphics);
+	allocate_arena(state);
 }
 
 int main(int argc, char** argv){

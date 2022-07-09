@@ -7,6 +7,7 @@
 #include <inttypes.h>
 
 #include "hashMap.h"
+#include "vector.h"
 #include "sdlfileutils.h"
 
 struct v2;
@@ -27,6 +28,7 @@ typedef struct view{
 }view;
 
 HASHMAP(FontMap, const char*, TTF_Font*)
+VECTOR(vecT_t, SDL_Texture*)
 
 typedef struct fontHandler{
 	char* activeFont;
@@ -51,6 +53,7 @@ typedef struct GraphicsHandler{
 	float spriteScaleY;
 	RENDER_SCALE_QUALITY renderScale;
 	fileLoader floader;
+	vecT_t texture_arena;
 }GraphicsHandler;
 
 void renderSetScaleQuality(GraphicsHandler* ghandle, RENDER_SCALE_QUALITY hint);
@@ -147,5 +150,6 @@ void fontHandlerInit(GraphicsHandler* ghandle);
 void loadFont(GraphicsHandler* ghandle, const char* src, const char* name);
 void setFont(GraphicsHandler* ghandle, char* fnt);
 void fontHandlerClose(GraphicsHandler* ghandle);
+void texture_arena_release(GraphicsHandler* ghandle);
 
 #endif
