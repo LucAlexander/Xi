@@ -65,10 +65,12 @@ uint32_t frame_time(program_state* state);
 void do_frame_try(program_state* state);
 void read_user_input(program_state* state);
 
+xi_utils construct_xi_utils(program_state*);
+
 void std_systems(program_state* state);
 void system_add(program_state* state, struct system_t, PROGRAM_STATE);
 
-void xisetup(program_state*);
-void xistart(program_state*);
+void xisetup(xi_utils*);
+void xistart(xi_utils*);
 
 #endif

@@ -41,6 +41,16 @@ void program_state_deinit(program_state* state){
 	mem_arena_dealloc(state->arena);
 }
 
+xi_utils construct_xi_utils(program_state* state){
+	xi_utils xi = {
+		&state->graphics,
+		&state->user_input,
+		&state->ecs,
+		state->arena
+	};
+	return xi;
+}
+
 void xi_init(program_state* state){
 	state->state = XI_STATE_INIT;
 	srand(time(NULL));
@@ -53,8 +63,9 @@ void xi_init(program_state* state){
 	};
 	renderSetView(&state->graphics, v);
 	std_systems(state);
-	xisetup(state);
-	xistart(state);
+	xi_utils xi = construct_xi_utils(state);
+	xisetup(&xi);
+	xistart(&xi);
 }
 
 void xi_deinit(program_state* state){
@@ -82,12 +93,7 @@ void xi_run_system_group(program_state* state, uint32_t group, int32_t layer){
 	state->state = group;
 	uint32_t i;
 	vsys_t system_list = state->system_group[group];
-	xi_utils xi = {
-		&state->graphics,
-		&state->user_input,
-		&state->ecs,
-		state->arena
-	};
+	xi_utils xi = construct_xi_utils(state);
 	for (i = 0;i<system_list.size;++i){
 		system_run(vsys_tRef(&system_list, i), &xi, layer);
 	}
