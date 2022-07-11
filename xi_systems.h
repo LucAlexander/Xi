@@ -10,4 +10,6 @@ SYSTEM(forces_s);
 
 SYSTEM(blitable_s);
 
+SYSTEM(behavior_s);
+
 #endif

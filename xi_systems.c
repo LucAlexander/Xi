@@ -18,3 +18,8 @@ SYSTEM(blitable_s){
 	ARG(Blitable* sprite, BLITABLE_C_MOC);
 	renderBlitableV2(xi->graphics, sprite, *position);
 }
+
+SYSTEM(behavior_s){
+	ARG(void(*f)(SYSTEM_ARG_REQUIREMENTS), BEHAVIOR_C_MOC);
+	f(xi, id, entity, relation);
+}
