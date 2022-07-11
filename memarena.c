@@ -34,6 +34,7 @@ void* mem_arena_request(mem_arena* arena, size_t request){
 void mem_arena_realloc(mem_arena* arena){
 	arena->next = mem_arena_alloc(arena->resize, arena->resize, arena->resize_count-1);
 	arena->resize_count = RESIZE_SENTINEL;
+	printf("realloc\n");
 }
 
 void mem_arena_dealloc(mem_arena* arena){

@@ -50,7 +50,8 @@ xi_utils construct_xi_utils(program_state* state){
 		&state->user_input,
 		&state->ecs,
 		state->arena,
-		state->project
+		state->project,
+		state->tick
 	};
 	return xi;
 }
@@ -91,6 +92,7 @@ void system_add(program_state* state, system_t system, PROGRAM_STATE software_st
 void std_systems(program_state* state){
 	system_add(state, system_init(forces_s, 2, POSITION_C_MOC, FORCES_C_MOC), XI_STATE_UPDATE);
 	system_add(state, system_init(behavior_s, 1, BEHAVIOR_C_MOC), XI_STATE_UPDATE);
+	system_add(state, system_init(repeater_s, 1, REPEATER_C_MOC), XI_STATE_UPDATE);
 	system_add(state, system_init(blitable_s, 2, POSITION_C_MOC, BLITABLE_C_MOC), XI_STATE_RENDER);
 }
 

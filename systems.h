@@ -6,6 +6,7 @@
 #include <stdarg.h>
 
 #define SYSTEM_ARG_REQUIREMENTS struct xi_utils* xi, uint32_t id, struct vec_t* entity, struct mu32_u32* relation
+#define SYSTEM_ARGS xi, id, entity, relation
 
 #define SYSTEM(name) void name(SYSTEM_ARG_REQUIREMENTS)
 #define ARG(variable, component) variable = vec_tGet(entity, mu32_u32Get(relation, component).val)

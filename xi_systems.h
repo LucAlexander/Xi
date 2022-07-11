@@ -11,5 +11,6 @@ SYSTEM(forces_s);
 SYSTEM(blitable_s);
 
 SYSTEM(behavior_s);
+SYSTEM(repeater_s);
 
 #endif

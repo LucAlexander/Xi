@@ -48,6 +48,7 @@ typedef struct xi_utils{
 	entity_data* ecs;
 	struct mem_arena* arena;
 	struct project_structs* project;
+	uint32_t ticks;
 }xi_utils;
 
 void program_state_init(program_state* state);

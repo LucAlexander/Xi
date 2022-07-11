@@ -21,5 +21,15 @@ SYSTEM(blitable_s){
 
 SYSTEM(behavior_s){
 	ARG(void(*f)(SYSTEM_ARG_REQUIREMENTS), BEHAVIOR_C_MOC);
-	f(xi, id, entity, relation);
+	f(SYSTEM_ARGS);
+}
+
+SYSTEM(repeater_s){
+	ARG(repeater_t* wrapper, REPEATER_C_MOC);
+	wrapper->ticks += xi->ticks;
+	if (wrapper->ticks >= wrapper->trigger_time && wrapper->trigger_count > 0){
+		wrapper->ticks -= wrapper->trigger_time;
+		wrapper->f(SYSTEM_ARGS);
+		wrapper->trigger_count -- ;
+	}
 }

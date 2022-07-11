@@ -69,11 +69,7 @@ uint32_t form_entity(entity_data* data){
 	vu32_tPushBack(&def->ids, id);
 	mu32_u32Push(&data->ent2arch, id, 0);
 	mu32_u32Push(&data->ent2layer, id, 0);
-	if (!mu32_maskContains(&data->masks, id)){
-		mu32_maskPush(&data->masks, id, 0);
-		return id;
-	}
-	*mu32_maskRef(&data->masks, id) = 0;
+	mu32_maskPush(&data->masks, id, 0);
 	return id; 
 }
 
@@ -87,7 +83,7 @@ void purge(entity_data* data){
 	uint32_t* keys = mu32_maskGetKeySet(&data->masks);
 	for (i = 0;i<data->masks.size;++i){
 		uint32_t eid = keys[i];
-		uint64_t* mask = mu32_maskRef(&data->masks, i);
+		uint64_t* mask = mu32_maskRef(&data->masks, eid);
 		if (bit_check(*mask, ENTITY_DEACTIVATED)){
 			purgeEntity(data, eid);
 		}
@@ -107,6 +103,7 @@ uint8_t purgeEntity(entity_data* data, uint32_t eid){
 			mat_tRemove(&arch->data, i);
 			mu32_u32Pop(&data->ent2arch, eid);
 			mu32_u32Pop(&data->ent2layer, eid);
+			mu32_maskPop(&data->masks, eid);
 			return 1;
 		}
 	}
