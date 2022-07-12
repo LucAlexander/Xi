@@ -23,8 +23,9 @@ typedef struct repeater_t{
 	uint32_t ticks;
 	uint32_t trigger_time;
 	uint32_t trigger_count;
+	uint8_t destroy_after;
 }repeater_t;
 
-void repeater_t_init(repeater_t* wrapper, void f(SYSTEM_ARG_REQUIREMENTS), uint32_t interval_time, uint32_t count);
+void repeater_t_init(repeater_t* wrapper, void f(SYSTEM_ARG_REQUIREMENTS), uint32_t interval_time, uint32_t count, uint8_t destroy);
 
 #endif

@@ -31,5 +31,8 @@ SYSTEM(repeater_s){
 		wrapper->ticks -= wrapper->trigger_time;
 		wrapper->f(SYSTEM_ARGS);
 		wrapper->trigger_count -- ;
+		if (wrapper->destroy_after && wrapper->trigger_count == 0){
+			destroy_entity(xi->ecs, id);
+		}
 	}
 }
