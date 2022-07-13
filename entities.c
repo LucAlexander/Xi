@@ -81,7 +81,8 @@ void destroy_entity(entity_data* data, uint32_t eid){
 void purge(entity_data* data){
 	uint32_t i;
 	uint32_t* keys = mu32_maskGetKeySet(&data->masks);
-	for (i = 0;i<data->masks.size;++i){
+	uint32_t n = data->masks.size;
+	for (i = 0;i<n;++i){
 		uint32_t eid = keys[i];
 		uint64_t* mask = mu32_maskRef(&data->masks, eid);
 		if (bit_check(*mask, ENTITY_DEACTIVATED)){

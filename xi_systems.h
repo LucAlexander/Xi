@@ -11,6 +11,7 @@ SYSTEM(forces_s);
 SYSTEM(blitable_s);
 
 SYSTEM(behavior_s);
+SYSTEM(fast_dealloc_s);
 SYSTEM(repeater_s);
 
 #endif

@@ -7,6 +7,7 @@ system_t system_init(void f(SYSTEM_ARG_REQUIREMENTS), uint32_t n, ...){
 	sys.mask = vu64_tInit();
 	sys.filter = 0;
 	sys.magnet = 0;
+	sys.requirement = 0;
 	sys.func = f;
 	uint32_t i;
 	va_list v;
@@ -17,6 +18,27 @@ system_t system_init(void f(SYSTEM_ARG_REQUIREMENTS), uint32_t n, ...){
 	system_add_filter(&sys, 1, ENTITY_DEACTIVATED);
 	va_end(v);
 	return sys;
+}
+
+void system_add_requirement(system_t* sys, uint32_t n, ...){
+	uint32_t i;
+	va_list v;
+	va_start(v, n);
+	for (i = 0;i<n;++i){
+		sys->requirement= bit_on(sys->requirement, va_arg(v, uint32_t));
+	}
+	va_end(v);
+
+}
+
+void system_remove_requirement(system_t* sys, uint32_t n, ...){
+	uint32_t i;
+	va_list v;
+	va_start(v, n);
+	for (i = 0;i<n;++i){
+		sys->requirement= bit_off(sys->requirement, va_arg(v, uint32_t));
+	}
+	va_end(v);
 }
 
 void system_add_filter(system_t* sys, uint32_t n, ...){
@@ -60,7 +82,13 @@ void system_remove_magnet(system_t* sys, uint32_t n, ...){
 }
 
 uint8_t system_filter(system_t* sys, uint64_t targetFlag){
-	return ((((targetFlag & sys->filter) != sys->filter) || (sys->filter==0)) && (((targetFlag & sys->magnet) ==sys->magnet) || (sys->magnet==0)));
+	uint64_t t = -1;
+	//((((targetFlag & sys->filter) != sys->filter) || (sys->filter==0)) && (((targetFlag & sys->magnet) ==sys->magnet) || (sys->magnet==0)));
+	return (
+		(targetFlag & sys->magnet) |
+		(targetFlag & (~sys->filter)) |
+		((~targetFlag) & (~sys->requirement))
+	) == t;
 }
 
 uint8_t system_layer_check(int32_t layer, entity_data* medium, uint32_t eid){

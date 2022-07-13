@@ -24,6 +24,11 @@ SYSTEM(behavior_s){
 	f(SYSTEM_ARGS);
 }
 
+SYSTEM(fast_dealloc_s){
+	ARG(void(*f)(SYSTEM_ARG_REQUIREMENTS), FAST_ALLOC_C_MOC);
+	f(SYSTEM_ARGS);
+}
+
 SYSTEM(repeater_s){
 	ARG(repeater_t* wrapper, REPEATER_C_MOC);
 	wrapper->ticks += xi->ticks;

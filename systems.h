@@ -19,12 +19,16 @@ struct mu32_u32;
 
 typedef struct system_t{
 	vu64_t mask;
+	// T&M | T&~F | ~R&~T
 	uint64_t filter;
 	uint64_t magnet;
+	uint64_t requirement;
 	void (*func)(SYSTEM_ARG_REQUIREMENTS);
 }system_t;
 
 system_t system_init(void f(SYSTEM_ARG_REQUIREMENTS), uint32_t n, ...);
+void system_add_requirement(system_t* sys, uint32_t n, ...);
+void system_remove_requirement(system_t* sys, uint32_t n, ...);
 void system_add_filter(system_t* sys, uint32_t n, ...);
 void system_remove_filter(system_t* sys, uint32_t n, ...);
 void system_add_magnet(system_t* sys, uint32_t n, ...);

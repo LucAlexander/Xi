@@ -114,6 +114,7 @@ typedef struct Blitable{
 }Blitable;
 
 void BlitableInitF(GraphicsHandler* ghandle, Blitable* blit, const char* source, uint32_t w, uint32_t h);
+void BlitableInitF_arena(GraphicsHandler* ghandle, Blitable* blit, const char* source, uint32_t w, uint32_t h);
 void BlitableInit(Blitable* blit, SDL_Texture* t, uint32_t w, uint32_t h);
 void renderBlitable(GraphicsHandler* ghandle, Blitable* blit, float x, float y);
 void renderBlitableV2(GraphicsHandler* ghandle, Blitable* blit, struct v2 pos);

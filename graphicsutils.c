@@ -64,7 +64,6 @@ SDL_Texture* getTexture(GraphicsHandler* ghandle, const char* src){
 	if (item == NULL){
 		printf("[!] Unable to construct image from file \'%s\'\n%s\n",src, SDL_GetError());
 	}
-	vecT_tPushBack(&ghandle->texture_arena, item);
 	return item;
 }
 
@@ -196,6 +195,12 @@ void formatDestRectToView(GraphicsHandler* ghandle, SDL_Rect* destRect){
 void formatDestFRectToView(GraphicsHandler* ghandle, SDL_FRect* destRect){
 	destRect->x-=ghandle->renderView.x;
 	destRect->y-=ghandle->renderView.y;
+}
+
+void BlitableInitF_arena(GraphicsHandler* ghandle, Blitable* blit, const char* source, uint32_t w, uint32_t h){
+	SDL_Texture* t = getTexture(ghandle, source);
+	vecT_tPushBack(&ghandle->texture_arena, t);
+	BlitableInit(blit, t, w, h);
 }
 
 void BlitableInitF(GraphicsHandler* ghandle, Blitable* blit, const char* source, uint32_t w, uint32_t h){

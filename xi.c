@@ -93,6 +93,12 @@ void std_systems(program_state* state){
 	system_add(state, system_init(forces_s, 2, POSITION_C_MOC, FORCES_C_MOC), XI_STATE_UPDATE);
 	system_add(state, system_init(behavior_s, 1, BEHAVIOR_C_MOC), XI_STATE_UPDATE);
 	system_add(state, system_init(repeater_s, 1, REPEATER_C_MOC), XI_STATE_UPDATE);
+
+	system_t fast_alloc = system_init(fast_dealloc_s, 1, FAST_ALLOC_C_MOC);
+	system_remove_filter(&fast_alloc, 1, ENTITY_DEACTIVATED);
+	system_add_requirement(&fast_alloc, 1, ENTITY_DEACTIVATED);
+	system_add(state, fast_alloc, XI_STATE_PURGE);
+
 	system_add(state, system_init(blitable_s, 2, POSITION_C_MOC, BLITABLE_C_MOC), XI_STATE_RENDER);
 }
 
@@ -146,6 +152,7 @@ void do_frame_try(program_state* state){
 	xi_run_system_group(state, XI_STATE_UPDATE_PRE, LAYER_INDEPENDENT);
 	xi_run_system_group(state, XI_STATE_UPDATE, LAYER_INDEPENDENT);
 	xi_run_system_group(state, XI_STATE_UPDATE_POST, LAYER_INDEPENDENT);
+	xi_run_system_group(state, XI_STATE_PURGE, LAYER_INDEPENDENT);
 	xi_purge(state);
 	newInputFrame(&state->user_input);
 	renderClear(&state->graphics);
