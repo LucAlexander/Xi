@@ -41,3 +41,16 @@ SYSTEM(repeater_s){
 		}
 	}
 }
+
+SYSTEM(animate_s){
+	ARG(Blitable* sprite, BLITABLE_C_MOC);
+	ARG(animator_t* animation, ANIMATOR_C_MOC);
+	sprite->drawBound.x = animation->pos_x*sprite->drawBound.w;
+	sprite->drawBound.y = animation->pos_y*sprite->drawBound.h;
+	animation->frame_time_counter += xi->ticks;
+	if (animation->frame_time_counter < animation->frame_time){
+		return;
+	}
+	animation->frame_time_counter -= animation->frame_time;
+	progress_animation(xi->graphics, animation);
+}

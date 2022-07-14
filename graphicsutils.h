@@ -27,7 +27,12 @@ typedef struct view{
 	float ph;
 }view;
 
+typedef struct animation_t{
+	int32_t x, y, z;
+}animation_t;
+
 HASHMAP(FontMap, const char*, TTF_Font*)
+HASHMAP(Animations, const char*, animation_t)
 VECTOR(vecT_t, SDL_Texture*)
 
 typedef struct fontHandler{
@@ -54,6 +59,7 @@ typedef struct GraphicsHandler{
 	RENDER_SCALE_QUALITY renderScale;
 	fileLoader floader;
 	vecT_t texture_arena;
+	Animations animations;
 }GraphicsHandler;
 
 void renderSetScaleQuality(GraphicsHandler* ghandle, RENDER_SCALE_QUALITY hint);
@@ -119,6 +125,33 @@ void BlitableInit(Blitable* blit, SDL_Texture* t, uint32_t w, uint32_t h);
 void renderBlitable(GraphicsHandler* ghandle, Blitable* blit, float x, float y);
 void renderBlitableV2(GraphicsHandler* ghandle, Blitable* blit, struct v2 pos);
 void BlitableFree(Blitable* blit);
+
+typedef struct animator_t{
+	const char* name;
+	uint32_t pos_x;
+	uint32_t pos_y;
+	uint32_t bounds_x;
+	uint32_t bounds_y;
+	int32_t index;
+	/* active
+	 * loop
+	 */
+	uint8_t flags;
+	uint32_t frame_time;
+	uint32_t frame_time_counter;
+}animator_t;
+
+void animator_t_init(animator_t* animator);
+void animator_set_animation(GraphicsHandler* ghandle, animator_t* animator, const char* name, Blitable* sprite);
+void animator_set_loop(animator_t* animator, uint8_t loop);
+void animator_set_active(animator_t* animator, uint8_t active);
+uint8_t animator_get_loop(animator_t* animator);
+uint8_t animator_get_active(animator_t* animator);
+void animator_set_frame_time(animator_t* animator, uint32_t ft);
+uint32_t animator_get_frame_time(animator_t* animator);
+
+void add_animation(GraphicsHandler* ghandle, const char* name, uint32_t start_frame_col, uint32_t start_frame_row, uint32_t length);
+void progress_animation(GraphicsHandler* ghandle, animator_t* animator);
 
 void blitSurface(GraphicsHandler* ghandle, SDL_Texture* texture, SDL_Rect* srcRect, SDL_Rect destRect);
 void blitSurfaceEX(GraphicsHandler* ghandle, SDL_Texture* texture, SDL_Rect* srcRect, SDL_Rect destRect, double angle, SDL_Point* center, SDL_RendererFlip flip);

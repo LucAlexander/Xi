@@ -93,6 +93,7 @@ void std_systems(program_state* state){
 	system_add(state, system_init(forces_s, 2, POSITION_C_MOC, FORCES_C_MOC), XI_STATE_UPDATE);
 	system_add(state, system_init(behavior_s, 1, BEHAVIOR_C_MOC), XI_STATE_UPDATE);
 	system_add(state, system_init(repeater_s, 1, REPEATER_C_MOC), XI_STATE_UPDATE);
+	system_add(state, system_init(animate_s, 2, BLITABLE_C_MOC, ANIMATOR_C_MOC), XI_STATE_UPDATE);
 
 	system_t fast_alloc = system_init(fast_dealloc_s, 1, FAST_ALLOC_C_MOC);
 	system_remove_filter(&fast_alloc, 1, ENTITY_DEACTIVATED);

@@ -1,11 +1,13 @@
 #define _GNU_SOURCE
 #include "graphicsutils.h"
 #include "mathutils.h"
+#include "cflags.h"
 #include <string.h>
 
 #include <stdio.h>
 
 HASHMAP_SOURCE(FontMap, const char*, TTF_Font*, hashS)
+HASHMAP_SOURCE(Animations, const char*, animation_t, hashS)
 VECTOR_SOURCE(vecT_t, SDL_Texture*)
 
 void graphicsInit(GraphicsHandler* ghandle, uint16_t width, uint16_t height, const char* windowTitle){
@@ -34,9 +36,11 @@ void graphicsInit(GraphicsHandler* ghandle, uint16_t width, uint16_t height, con
 	renderSetView(ghandle, defaultView);
 	fileLoaderInit(&ghandle->floader);
 	fontHandlerInit(ghandle);
+	ghandle->animations = AnimationsInit();
 }
 
 void graphicsClose(GraphicsHandler* ghandle){
+	AnimationsFree(&ghandle->animations);
 	texture_arena_release(ghandle);
 	vecT_tFree(&ghandle->texture_arena);
 	fontHandlerClose(ghandle);
@@ -244,6 +248,88 @@ void renderBlitableV2(GraphicsHandler* ghandle, Blitable* blit, v2 pos){
 void BlitableFree(Blitable* blit){
 	SDL_DestroyTexture(blit->texture);
 	blit->texture = NULL;
+}
+
+void animator_t_init(animator_t* animator){
+	animator->name = "";
+	animator->pos_x = 0;
+	animator->pos_y = 0;
+	animator->bounds_x = 0;
+	animator->bounds_y = 0;
+	animator->index = 0;
+	animator->flags = 1;
+	animator->frame_time = 0;
+	animator->frame_time_counter = 0;
+}
+
+void animator_set_animation(GraphicsHandler* ghandle, animator_t* animator, const char* name, Blitable* sprite){
+	if (animator->name == name){
+		return;
+	}
+	animator->name = name;
+	animator->bounds_x = sprite->textureW/sprite->drawBound.w;
+	animator->bounds_y = sprite->textureH/sprite->drawBound.h;
+	animator->index = -1;
+	animator->frame_time_counter = 0;
+	progress_animation(ghandle, animator);
+}
+
+void animator_set_loop(animator_t* animator, uint8_t loop){
+	animator->flags = bit_set(animator->flags, 2, loop);
+}
+
+void animator_set_active(animator_t* animator, uint8_t active){
+	animator->flags = bit_set(animator->flags, 1, active);
+}
+
+uint8_t animator_get_loop(animator_t* animator){
+	return bit_on(animator->flags, 2);
+}
+
+uint8_t animator_get_active(animator_t* animator){
+	return bit_on(animator->flags, 1);
+}
+
+void animator_set_frame_time(animator_t* animator, uint32_t ft){
+	animator->frame_time = ft;
+}
+
+uint32_t animator_get_frame_time(animator_t* animator){
+	return animator->frame_time;
+}
+
+void add_animation(GraphicsHandler* ghandle, const char* name, uint32_t start_frame_col, uint32_t start_frame_row, uint32_t length){
+	animation_t anim = {start_frame_col, start_frame_row, length};
+	AnimationsPush(&ghandle->animations, name, anim);
+}
+
+void progress_animation(GraphicsHandler* ghandle, animator_t* animator){
+	if (!bit_check(animator->flags, 1)){
+		return;
+	}
+	animation_t animation = AnimationsGet(&ghandle->animations, animator->name).val;
+	if (animator->index == -1){
+		animator->pos_x = animation.x;
+		animator->pos_y = animation.y;
+		animator->index++;
+		return;
+	}
+	if ((animator->index == animation.z-1)){
+		if (!bit_check(animator->flags, 2)){
+			return;
+		}
+		animator->index = 0;
+		animator->pos_x = animation.x;
+		animator->pos_y = animation.y;
+		return;
+	}
+	animator->pos_x++;
+	animator->index++;
+	if (animator->pos_x >= animator->bounds_x){
+		animator->pos_y ++;
+		animator->pos_y %= animator->bounds_y;
+		animator->pos_x = 0;
+	}
 }
 
 void blitSurface(GraphicsHandler* ghandle, SDL_Texture* texture, SDL_Rect* srcRect, SDL_Rect destRect){

@@ -14,4 +14,6 @@ SYSTEM(behavior_s);
 SYSTEM(fast_dealloc_s);
 SYSTEM(repeater_s);
 
+SYSTEM(animate_s);
+
 #endif
