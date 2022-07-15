@@ -22,6 +22,7 @@ void program_state_init(program_state* state){
 	}
 	state->state = XI_SYSTEM_STATE_COUNT; // pre state sentinel
 	graphicsInit(&state->graphics, WINDOW_W, WINDOW_H, WINDOW_TITLE);
+	audio_init(&state->audio);
 	inputInit(&state->user_input);
 	entity_data_init(&state->ecs);
 	allocate_arena(state);
@@ -38,6 +39,7 @@ void program_state_deinit(program_state* state){
 		vsys_tFree(&system_list);
 	}
 	graphicsClose(&state->graphics);
+	audio_close(&state->audio);
 	entity_data_free(&state->ecs);
 	mem_arena_dealloc(state->arena);
 	free(state->project);
@@ -47,6 +49,7 @@ void program_state_deinit(program_state* state){
 xi_utils construct_xi_utils(program_state* state){
 	xi_utils xi = {
 		&state->graphics,
+		&state->audio,
 		&state->user_input,
 		&state->ecs,
 		state->arena,

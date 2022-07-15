@@ -1,7 +1,7 @@
 CC=gcc
 CCWIN=x86_64-w64-mingw32-gcc
 WINFLAGS=-lmingw32
-CFLAGS=-lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_image -lm
+CFLAGS=-lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_image -lSDL2_mixer -lm
 CDEBUGFLAGS=-Wall -g
 WINLIBS=-ISDL2/include/ -LSDL2/lib/
 OUT=xiprog
@@ -22,6 +22,7 @@ compile-linux:
 	mv $(OUT) $(BUILDLINUX)./bin/
 	cp -r projects/$(PROJECT)/fnt/ $(BUILDLINUX)
 	cp -r projects/$(PROJECT)/spr/ $(BUILDLINUX)
+	cp -r projects/$(PROJECT)/snd/ $(BUILDLINUX)
 
 debug-linux:
 	rm -rf $(BUILDLINUX)
@@ -31,6 +32,7 @@ debug-linux:
 	mv $(OUT)-debug $(BUILDLINUX)./bin/
 	cp -r projects/$(PROJECT)/fnt/ $(BUILDLINUX)
 	cp -r projects/$(PROJECT)/spr/ $(BUILDLINUX)
+	cp -r projects/$(PROJECT)/snd/ $(BUILDLINUX)
 
 compile-win:
 	rm -rf $(BUILDWIN)
@@ -41,6 +43,7 @@ compile-win:
 	cp $(wildcard *.dll) $(BUILDWIN)./bin/
 	cp -r projects/$(PROJECT)/fnt/ $(BUILDWIN)
 	cp -r projects/$(PROJECT)/spr/ $(BUILDWIN)
+	cp -r projects/$(PROJECT)/snd/ $(BUILDWIN)
 
 debug-win:
 	rm -rf $(BUILDWIN)
@@ -51,7 +54,7 @@ debug-win:
 	cp $(wildcard *.dll) $(BUILDWIN)./bin/
 	cp -r projects/$(PROJECT)/fnt/ $(BUILDWIN)
 	cp -r projects/$(PROJECT)/spr/ $(BUILDWIN)
-
+	cp -r projects/$(PROJECT)/snd/ $(BUILDWIN)
 
 compile-all:
 	make compile-linux

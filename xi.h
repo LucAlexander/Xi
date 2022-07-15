@@ -2,6 +2,7 @@
 #define XI_H
 
 #include "graphicsutils.h"
+#include "audioutils.h"
 #include "inpututils.h"
 #include "entities.h"
 #include "vector.h"
@@ -36,6 +37,7 @@ typedef struct program_state{
 	PROGRAM_STATE state;
 	SDL_Event event;
 	GraphicsHandler graphics;
+	AudioHandler audio;
 	input user_input;
 	entity_data ecs;
 	struct mem_arena* arena;
@@ -44,6 +46,7 @@ typedef struct program_state{
 
 typedef struct xi_utils{
 	GraphicsHandler* graphics;
+	AudioHandler* audio;
 	input* user_input;
 	entity_data* ecs;
 	struct mem_arena* arena;

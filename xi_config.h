@@ -18,5 +18,6 @@
 
 #define XI_FONT "../fnt/"
 #define XI_SPRITE "../spr/"
+#define XI_SOUND "../snd/"
 
 #endif
