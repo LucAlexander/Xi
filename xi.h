@@ -13,6 +13,7 @@ struct system_t;
 struct project_structs;
 
 VECTOR(vsys_t, struct system_t)
+HASHMAP(mu32u8_t, uint32_t, uint8_t)
 
 typedef enum PROGRAM_STATE{
 	XI_STATE_UPDATE_PRE,

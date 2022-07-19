@@ -13,6 +13,7 @@
 #include "systems.h"
 
 VECTOR_SOURCE(vsys_t, system_t)
+HASHMAP_SOURCE(mu32u8_t, uint32_t, uint8_t, hashI)
 
 void program_state_init(program_state* state){
 	state->running = 1;
@@ -108,11 +109,18 @@ void xi_run_system_group(program_state* state, uint32_t group, uint16_t layer){
 }
 
 void run_render_systems(program_state* state, uint32_t group){
-	//TODO optimize/make proper lol
-	uint16_t layer;
-	for (layer= 0;layer<100;++layer){
-		xi_run_system_group(state, group, layer);
+	uint32_t i, n = state->ecs.entities;
+	mu32u8_t map = mu32u8_tInit();
+	for (i = 0;i<n;++i){
+		mu32u8_tPush(&map, state->ecs.layers[i], 1);
 	}
+	n = map.size;
+	uint32_t* layers = mu32u8_tGetKeySet(&map);
+	mu32u8_tFree(&map);
+	for (i = 0;i<n;++i){
+		xi_run_system_group(state, group, i);
+	}
+	free(layers);
 }
 
 void tick_update(program_state* state){
