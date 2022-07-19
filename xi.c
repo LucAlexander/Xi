@@ -2,12 +2,14 @@
 #include <time.h>
 
 #include "xi.h"
-#include "xi_config.h"
+#include "config/project-config.h"
+
+#include "mathutils.h"
+#include "graphicsutils.h"
 
 #include "xi_components.h"
 #include "xi_systems.h"
 
-#include "memarena.h"
 #include "systems.h"
 
 VECTOR_SOURCE(vsys_t, system_t)
@@ -24,24 +26,18 @@ void program_state_init(program_state* state){
 	graphicsInit(&state->graphics, WINDOW_W, WINDOW_H, WINDOW_TITLE);
 	audio_init(&state->audio);
 	inputInit(&state->user_input);
-	entity_data_init(&state->ecs);
-	allocate_arena(state);
+	ecs_init(&state->ecs, COMPONENT_COUNT, COMPONENT_SIZES);
 	state->project = NULL;
 }
 
 void program_state_deinit(program_state* state){
-	uint32_t i, k;
+	uint32_t i;
 	for (i = 0;i<XI_SYSTEM_STATE_COUNT;++i){
-		vsys_t system_list = state->system_group[i];
-		for (k = 0;k<system_list.size;++k){
-			system_free(vsys_tRef(&system_list, k));
-		}
-		vsys_tFree(&system_list);
+		vsys_tFree(&state->system_group[i]);
 	}
 	graphicsClose(&state->graphics);
 	audio_close(&state->audio);
-	entity_data_free(&state->ecs);
-	mem_arena_dealloc(state->arena);
+	ecs_deinit(&state->ecs);
 	free(state->project);
 	state->project = NULL;
 }
@@ -52,7 +48,6 @@ xi_utils construct_xi_utils(program_state* state){
 		&state->audio,
 		&state->user_input,
 		&state->ecs,
-		state->arena,
 		state->project,
 		state->tick
 	};
@@ -80,9 +75,10 @@ void xi_deinit(program_state* state){
 	state->state = XI_STATE_DEINIT;
 }
 
-void xi_purge(program_state* state){
-	state->state = XI_STATE_PURGE;
-	purge(&state->ecs);
+void reset_arena(xi_utils* xi){
+	texture_arena_release(xi->graphics);
+	xi->graphics->texture_arena = vecT_tInit();
+	ecs_clear(xi->ecs);
 }
 
 void system_add(program_state* state, system_t system, PROGRAM_STATE software_state){
@@ -93,38 +89,29 @@ void system_add(program_state* state, system_t system, PROGRAM_STATE software_st
 }
 
 void std_systems(program_state* state){
-	system_add(state, system_init(forces_s, 2, POSITION_C_MOC, FORCES_C_MOC), XI_STATE_UPDATE);
-	system_add(state, system_init(behavior_s, 1, BEHAVIOR_C_MOC), XI_STATE_UPDATE);
-	system_add(state, system_init(repeater_s, 1, REPEATER_C_MOC), XI_STATE_UPDATE);
-	system_add(state, system_init(animate_s, 2, BLITABLE_C_MOC, ANIMATOR_C_MOC), XI_STATE_UPDATE);
+	system_add(state, system_init(forces_s, 2, POSITION_C, FORCES_C), XI_STATE_UPDATE);
+	system_add(state, system_init(behavior_s, 1, BEHAVIOR_C), XI_STATE_UPDATE);
+	system_add(state, system_init(repeater_s, 1, REPEATER_C), XI_STATE_UPDATE);
+	system_add(state, system_init(animate_s, 2, BLITABLE_C, ANIMATOR_C), XI_STATE_UPDATE);
 
-	system_t fast_alloc = system_init(fast_dealloc_s, 1, FAST_ALLOC_C_MOC);
-	system_remove_filter(&fast_alloc, 1, ENTITY_DEACTIVATED);
-	system_add_requirement(&fast_alloc, 1, ENTITY_DEACTIVATED);
-	system_add(state, fast_alloc, XI_STATE_PURGE);
-
-	system_add(state, system_init(blitable_s, 2, POSITION_C_MOC, BLITABLE_C_MOC), XI_STATE_RENDER);
+	system_add(state, system_init(blitable_s, 2, POSITION_C, BLITABLE_C), XI_STATE_RENDER);
 }
 
-void xi_run_system_group(program_state* state, uint32_t group, int32_t layer){
+void xi_run_system_group(program_state* state, uint32_t group, uint16_t layer){
 	state->state = group;
 	uint32_t i;
 	vsys_t system_list = state->system_group[group];
 	xi_utils xi = construct_xi_utils(state);
 	for (i = 0;i<system_list.size;++i){
-		system_run(vsys_tRef(&system_list, i), &xi, layer);
+		system_run(vsys_tGet(&system_list, i), &xi, layer);
 	}
 }
 
 void run_render_systems(program_state* state, uint32_t group){
-	mu32_u32Iterator it = mu32_u32IteratorInit(&state->ecs.ent2layer);
-	int32_t layer = -1;
-	while (mu32_u32IteratorHasNext(&it)){
-		mu32_u32Result r = mu32_u32IteratorNext(&it);
-		if (r.val != layer){
-			layer = r.val;
-			xi_run_system_group(state, group, layer);
-		}
+	//TODO optimize/make proper lol
+	uint16_t layer;
+	for (layer= 0;layer<100;++layer){
+		xi_run_system_group(state, group, layer);
 	}
 }
 
@@ -153,11 +140,9 @@ void do_frame_try(program_state* state){
 	if (!tick(state)){
 		return;
 	}
-	xi_run_system_group(state, XI_STATE_UPDATE_PRE, LAYER_INDEPENDENT);
-	xi_run_system_group(state, XI_STATE_UPDATE, LAYER_INDEPENDENT);
-	xi_run_system_group(state, XI_STATE_UPDATE_POST, LAYER_INDEPENDENT);
-	xi_run_system_group(state, XI_STATE_PURGE, LAYER_INDEPENDENT);
-	xi_purge(state);
+	xi_run_system_group(state, XI_STATE_UPDATE_PRE, 0);
+	xi_run_system_group(state, XI_STATE_UPDATE, 0);
+	xi_run_system_group(state, XI_STATE_UPDATE_POST, 0);
 	newInputFrame(&state->user_input);
 	renderClear(&state->graphics);
 	renderSetColor(&state->graphics, 0, 0, 0, 255);
@@ -195,16 +180,6 @@ void read_user_input(program_state* state){
 			mouseMoveEvent(&state->user_input, state->event.motion.x, state->event.motion.y);
 			return;
 	}
-}
-
-void allocate_arena(program_state* state){
-	state->arena = mem_arena_alloc(MEM_POOL_INITIAL, MEM_POOL_RESIZE, MEM_POOL_RESIZE_COUNT);
-}
-
-void reset_arena(program_state* state){
-	mem_arena_dealloc(state->arena);
-	texture_arena_release(&state->graphics);
-	allocate_arena(state);
 }
 
 int main(int argc, char** argv){

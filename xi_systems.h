@@ -4,14 +4,12 @@
 #include "systems.h"
 
 struct entity_data;
-struct vec_t;
 
 SYSTEM(forces_s);
 
 SYSTEM(blitable_s);
 
 SYSTEM(behavior_s);
-SYSTEM(fast_dealloc_s);
 SYSTEM(repeater_s);
 
 SYSTEM(animate_s);

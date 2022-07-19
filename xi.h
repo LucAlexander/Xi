@@ -9,10 +9,7 @@
 
 #include <inttypes.h>
 
-#define LAYER_INDEPENDENT -1
-
 struct system_t;
-struct mem_arena;
 struct project_structs;
 
 VECTOR(vsys_t, struct system_t)
@@ -21,7 +18,6 @@ typedef enum PROGRAM_STATE{
 	XI_STATE_UPDATE_PRE,
 	XI_STATE_UPDATE,
 	XI_STATE_UPDATE_POST,
-	XI_STATE_PURGE,
 	XI_STATE_RENDER,
 	XI_STATE_RENDER_GUI,
 	XI_SYSTEM_STATE_COUNT,
@@ -40,7 +36,6 @@ typedef struct program_state{
 	AudioHandler audio;
 	input user_input;
 	entity_data ecs;
-	struct mem_arena* arena;
 	struct project_structs* project;
 }program_state;
 
@@ -49,7 +44,6 @@ typedef struct xi_utils{
 	AudioHandler* audio;
 	input* user_input;
 	entity_data* ecs;
-	struct mem_arena* arena;
 	struct project_structs* project;
 	uint32_t ticks;
 }xi_utils;
@@ -57,10 +51,11 @@ typedef struct xi_utils{
 void program_state_init(program_state* state);
 void program_state_deinit(program_state* state);
 
+void reset_arena(xi_utils* xi);
+
 void xi_init(program_state* state);
 void xi_deinit(program_state* state);
-void xi_purge(program_state* state);
-void xi_run_system_group(program_state* state, uint32_t group, int32_t layer);
+void xi_run_system_group(program_state* state, uint32_t group, uint16_t layer);
 
 void run_render_systems(program_state* state, uint32_t group);
 
@@ -76,9 +71,6 @@ xi_utils construct_xi_utils(program_state*);
 
 void std_systems(program_state* state);
 void system_add(program_state* state, struct system_t, PROGRAM_STATE);
-
-void allocate_arena(program_state* state);
-void reset_arena(program_state* state);
 
 void xisetup(xi_utils*);
 void xistart(xi_utils*);

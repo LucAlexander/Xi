@@ -14,10 +14,15 @@ USER_FILES=$(wildcard projects/$(PROJECT)/src/*.h) $(wildcard projects/$(PROJECT
 project:
 	cp -r template/ projects/$(PROJECT)
 
-compile-linux:
+setup-linux:
 	rm -rf $(BUILDLINUX)
+	rm -rf comfig/
 	mkdir $(BUILDLINUX)
 	mkdir $(BUILDLINUX)./bin/
+	cp -r projects/${PROJECT}/src/config/ .
+
+compile-linux:
+	make setup-linux
 	$(CC) $(wildcard *.h) $(wildcard *.c) $(USER_FILES) $(CFLAGS) -o $(OUT)
 	mv $(OUT) $(BUILDLINUX)./bin/
 	cp -r projects/$(PROJECT)/fnt/ $(BUILDLINUX)
@@ -25,19 +30,22 @@ compile-linux:
 	cp -r projects/$(PROJECT)/snd/ $(BUILDLINUX)
 
 debug-linux:
-	rm -rf $(BUILDLINUX)
-	mkdir $(BUILDLINUX)
-	mkdir $(BUILDLINUX)./bin/
+	make setup-linux
 	$(CC) $(wildcard *.h) $(wildcard *.c) $(USER_FILES) $(CFLAGS) $(CDEBUGFLAGS) -o $(OUT)-debug
 	mv $(OUT)-debug $(BUILDLINUX)./bin/
 	cp -r projects/$(PROJECT)/fnt/ $(BUILDLINUX)
 	cp -r projects/$(PROJECT)/spr/ $(BUILDLINUX)
 	cp -r projects/$(PROJECT)/snd/ $(BUILDLINUX)
 
-compile-win:
+setup-win:
 	rm -rf $(BUILDWIN)
+	rm -rf config/
 	mkdir $(BUILDWIN)
 	mkdir $(BUILDWIN)./bin/
+	cp -r projects/$(PROJECT)/src/config/ .
+
+compile-win:
+	make setup-win
 	$(CCWIN) $(wildcard *.h) $(wildcard *.c) $(USER_FILES) $(WINLIBS) $(WINFLAGS) $(CFLAGS) -o $(OUT).exe
 	mv $(OUT).exe $(BUILDWIN)./bin/
 	cp $(wildcard *.dll) $(BUILDWIN)./bin/
@@ -46,9 +54,7 @@ compile-win:
 	cp -r projects/$(PROJECT)/snd/ $(BUILDWIN)
 
 debug-win:
-	rm -rf $(BUILDWIN)
-	mkdir $(BUILDWIN)
-	mkdir $(BUILDWIN)./bin/
+	make setup-win
 	$(CCWIN) $(wildcard *.h) $(wildcard *.c) $(USER_FILES) $(WINLIBS) $(WINFLAGS) $(CFLAGS) $(CDEBUGFLAGS) -o $(OUT)-debug.exe
 	mv $(OUT)-debug.exe $(BUILDWIN)./bin/
 	cp $(wildcard *.dll) $(BUILDWIN)./bin/
@@ -65,6 +71,7 @@ debug-all:
 	make debug-win
 
 clean:
+	rm -rf config/
 	rm -rf $(BUILDWIN)
 	rm -rf $(BUILDLINUX)
 

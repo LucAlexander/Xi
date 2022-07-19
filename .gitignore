@@ -7,3 +7,5 @@ SDL2/
 build-win/
 build-linux/
 projects/*
+plot.py
+./config/
