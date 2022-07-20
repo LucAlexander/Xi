@@ -5,8 +5,13 @@
 
 #include "entities.h"
 #include "cflags.h"
+#include "mathutils.h"
+
+#include "xi_components.h"
+#include "systems.h"
 
 VECTOR_SOURCE(su32_t, uint32_t)
+HASHMAP_SOURCE(mu32u32_t, uint32_t, uint32_t, hashI)
 
 void ecs_init(entity_data* d, uint32_t n, ...){
 	d->entities = 0;
@@ -69,7 +74,7 @@ uint16_t entity_max_layer(entity_data* d){
 	return m;
 }
 
-uint8_t entity_exists(entity_data* d, uint32_t eid){
+uint8_t entity_active(entity_data* d, uint32_t eid){
 	return !bit_check(d->flags[eid], ENTITY_DEACTIVATED);
 }
 
@@ -97,5 +102,152 @@ void ecs_deinit(entity_data* d){
 	d->data = NULL;
 	d->flags = NULL;
 	d->layers = NULL;
+}
+
+uint8_t entity_exact_mask_logic(entity_data* d, uint32_t eid, uint8_t exact, uint64_t reference, uint64_t candidate){
+	return entity_active(d, eid) && ((exact && (candidate==reference)) || (!(exact) && system_mask_compare(reference, candidate)));
+}
+
+uint8_t entity_exists_mask(entity_data* d, uint8_t exact, uint64_t mask){
+	uint32_t i;
+	for (i=0;i<d->entities;++i){
+		uint64_t m = d->masks[i];
+		if (entity_exact_mask_logic(d, i, exact, mask, m)){
+			return 1;
+		}
+	}
+	return 0;
+}
+
+uint8_t entity_exists(entity_data* d, uint8_t exact, uint32_t n, ...){
+	uint64_t mask;
+	va_list v;
+	va_start(v, n);
+	uint32_t i;
+	for (i = 0;i<n;++i){
+		mask = bit_on(mask, va_arg(v, uint32_t));
+	}
+	va_end(v);
+	return entity_exists_mask(d, exact, mask);
+}
+
+uint32_t entity_nearest_mask(entity_data* d, v2 pos, uint8_t exact, uint64_t mask){
+	int32_t distance = -1;
+	uint32_t i, eid = 0;
+	for (i=0;i<d->entities;++i){
+		uint64_t m = d->masks[i];
+		if (entity_exact_mask_logic(d, i, exact, mask, m)){
+			v2* point = component_get(d, i, POSITION_C);
+			uint32_t refdist = distancePointV2(pos, *point);
+			if (distance == -1 || refdist < distance){
+				eid = i;
+				distance = refdist;
+			}
+		}
+	}
+	return eid;
+}
+
+uint32_t entity_nearest(entity_data* d, v2 pos, uint8_t exact, uint32_t n, ...){
+	uint64_t mask;
+	va_list v;
+	va_start(v, n);
+	uint32_t i;
+	for (i = 0;i<n;++i){
+		mask = bit_on(mask, va_arg(v, uint32_t));
+	}
+	va_end(v);
+	return entity_nearest_mask(d, pos, exact, mask);
+}
+
+uint32_t entity_nearest_mask_n(entity_data* d, v2 pos, uint32_t n, uint8_t exact, uint64_t mask){
+	mu32u32_t map = mu32u32_tInit();
+	uint32_t i;
+	for (i=0;i<d->entities;++i){
+		uint64_t m = d->masks[i];
+		if (entity_exact_mask_logic(d, i, exact, mask, m)){
+			v2* point = component_get(d, i, POSITION_C);
+			uint32_t refdist = distancePointV2(pos, *point);
+			mu32u32_tPush(&map, refdist, i);
+		}
+	}
+	uint32_t* keys = mu32u32_tGetKeySet(&map);
+	uint32_t eid = mu32u32_tGet(&map, keys[n]).val;
+	free(keys);
+	keys = NULL;
+	mu32u32_tFree(&map);
+	return eid;
+}
+
+uint32_t entity_nearest_n(entity_data* d, v2 pos, uint8_t exact, uint32_t n, uint32_t m, ...){
+	uint64_t mask;
+	va_list v;
+	va_start(v, m);
+	uint32_t i;
+	for (i = 0;i<m;++i){
+		mask = bit_on(mask, va_arg(v, uint32_t));
+	}
+	va_end(v);
+	return entity_nearest_mask_n(d, pos, n, exact, mask);
+}
+
+uint32_t entity_furthest_mask(entity_data* d, v2 pos, uint8_t exact, uint64_t mask){
+	int32_t distance = -1;
+	uint32_t i, eid = 0;
+	for (i=0;i<d->entities;++i){
+		uint64_t m = d->masks[i];
+		if (entity_exact_mask_logic(d, i, exact, mask, m)){
+			v2* point = component_get(d, i, POSITION_C);
+			uint32_t refdist = distancePointV2(pos, *point);
+			if (distance == -1 || refdist > distance){
+				eid = i;
+				distance = refdist;
+			}
+		}
+	}
+	return eid;
+}
+
+uint32_t entity_furthest(entity_data* d, v2 pos, uint8_t exact, uint32_t n, ...){
+	uint64_t mask;
+	va_list v;
+	va_start(v, n);
+	uint32_t i;
+	for (i = 0;i<n;++i){
+		mask = bit_on(mask, va_arg(v, uint32_t));
+	}
+	va_end(v);
+	return entity_furthest_mask(d, pos, exact, mask);
+}
+
+uint32_t entity_furthest_mask_n(entity_data* d, v2 pos, uint32_t n, uint8_t exact, uint64_t mask){
+	mu32u32_t map = mu32u32_tInit();
+	uint32_t i;
+	for (i=0;i<d->entities;++i){
+		uint64_t m = d->masks[i];
+		if (entity_exact_mask_logic(d, i, exact, mask, m)){
+			v2* point = component_get(d, i, POSITION_C);
+			uint32_t refdist = distancePointV2(pos, *point);
+			mu32u32_tPush(&map, refdist, i);
+		}
+	}
+	uint32_t* keys = mu32u32_tGetKeySet(&map);
+	uint32_t eid = mu32u32_tGet(&map, keys[map.size-n]).val;
+	free(keys);
+	keys = NULL;
+	mu32u32_tFree(&map);
+	return eid;
+}
+
+uint32_t entity_furthest_n(entity_data* d, v2 pos, uint8_t exact, uint32_t n, uint32_t m, ...){
+	uint64_t mask;
+	va_list v;
+	va_start(v, m);
+	uint32_t i;
+	for (i = 0;i<m;++i){
+		mask = bit_on(mask, va_arg(v, uint32_t));
+	}
+	va_end(v);
+	return entity_furthest_mask_n(d, pos, exact, n, mask);
 }
 
