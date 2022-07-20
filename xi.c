@@ -94,8 +94,15 @@ void std_systems(program_state* state){
 	system_add(state, system_init(behavior_s, 1, BEHAVIOR_C), XI_STATE_UPDATE);
 	system_add(state, system_init(repeater_s, 1, REPEATER_C), XI_STATE_UPDATE);
 	system_add(state, system_init(animate_s, 2, BLITABLE_C, ANIMATOR_C), XI_STATE_UPDATE);
+	system_add(state, system_init(clickable_s, 2, POSITION_C, CLICKABLE_C), XI_STATE_UPDATE);
 
-	system_add(state, system_init(blitable_s, 2, POSITION_C, BLITABLE_C), XI_STATE_RENDER);
+	system_t blit = system_init(blitable_s, 2, POSITION_C, BLITABLE_C);
+	system_add_filter(&blit, 1, ENTITY_GUI);
+	system_add(state, blit, XI_STATE_RENDER);
+
+	system_t guiblit = system_init(blitable_s, 2, POSITION_C, BLITABLE_C);
+	system_add_requirement(&guiblit, 1, ENTITY_GUI);
+	system_add(state, guiblit, XI_STATE_RENDER_GUI);
 }
 
 void xi_run_system_group(program_state* state, uint32_t group, uint16_t layer){
@@ -155,7 +162,10 @@ void do_frame_try(program_state* state){
 	renderClear(&state->graphics);
 	renderSetColor(&state->graphics, 0, 0, 0, 255);
 	run_render_systems(state, XI_STATE_RENDER);
+	view world = renderGetView(&state->graphics);
+	renderSetViewAbsolute(&state->graphics);
 	run_render_systems(state, XI_STATE_RENDER_GUI);
+	renderSetView(&state->graphics, world);
 	renderFlip(&state->graphics);
 	tick_reset(state);
 }

@@ -37,6 +37,30 @@ SYSTEM(repeater_s){
 	}
 }
 
+SYSTEM(clickable_s){
+	ARG(v2* position, POSITION_C);
+	ARG(clickable_t* button, CLICKABLE_C);
+	if (button->recharge_counter > 0){
+		button->recharge_counter -= xi->ticks;
+	}
+	v2 mouse = mousePos(xi->user_input);
+	v4 bounds = {
+		position->x,
+		position->y,
+	       	button->w,
+		button->h
+	};
+	if (
+		pointInRectV2(mouse, bounds) &&
+		mousePressed(xi->user_input, 1) &&
+		button->recharge_counter <= 0
+	){
+		button->toggle = !button->toggle;
+		button->recharge_counter = button->recharge_time;
+		button->f(SYSTEM_ARGS);
+	}
+}
+
 SYSTEM(animate_s){
 	ARG(Blitable* sprite, BLITABLE_C);
 	ARG(animator_t* animation, ANIMATOR_C);

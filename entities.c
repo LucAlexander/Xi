@@ -251,3 +251,6 @@ uint32_t entity_furthest_n(entity_data* d, v2 pos, uint8_t exact, uint32_t n, ui
 	return entity_furthest_mask_n(d, pos, exact, n, mask);
 }
 
+void entity_add_flag(entity_data* d, uint32_t eid, uint32_t flag){
+	d->flags[eid] = bit_on(d->flags[eid], flag);
+}

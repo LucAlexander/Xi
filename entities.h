@@ -13,7 +13,8 @@ HASHMAP(mu32u32_t, uint32_t, uint32_t)
 struct v2;
 
 typedef enum FLAGS{
-	ENTITY_DEACTIVATED=1
+	ENTITY_DEACTIVATED=1,
+	ENTITY_GUI=2
 }FLAGS;
 
 typedef struct entity_data{
@@ -36,6 +37,7 @@ void* component_get(entity_data* d, uint32_t eid, uint32_t cid);
 void component_add(entity_data* d, uint32_t eid, uint32_t cid, void* data);
 void component_remove(entity_data* d, uint32_t eid, uint32_t cid);
 
+void entity_add_flag(entity_data* d, uint32_t eid, uint32_t flag);
 uint8_t entity_active(entity_data* d, uint32_t eid);
 uint8_t entity_exists_mask(entity_data* d, uint8_t exact, uint64_t mask);
 uint8_t entity_exists(entity_data* d, uint8_t exact, uint32_t n, ...);

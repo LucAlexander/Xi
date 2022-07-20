@@ -11,6 +11,7 @@ SYSTEM(blitable_s);
 
 SYSTEM(behavior_s);
 SYSTEM(repeater_s);
+SYSTEM(clickable_s);
 
 SYSTEM(animate_s);
 

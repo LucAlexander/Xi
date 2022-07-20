@@ -10,7 +10,8 @@
 	BLITABLE_C,/*Blitable*/\
 	BEHAVIOR_C,/*logic_t*/\
 	REPEATER_C,/*repeater_t*/\
-	ANIMATOR_C/*animator_t*/
+	ANIMATOR_C,/*animator_t*/\
+	CLICKABLE_C/*clickable_t*/
 
 #define COMPONENT_SIZES\
 	sizeof(v2),\
@@ -18,7 +19,8 @@
 	sizeof(Blitable),\
 	sizeof(logic_t),\
 	sizeof(repeater_t),\
-	sizeof(animator_t)\
+	sizeof(animator_t),\
+	sizeof(clickable_t)\
 	USER_COMPONENT_SIZES
 
 typedef enum COMPONENTS{
@@ -39,5 +41,16 @@ typedef struct repeater_t{
 }repeater_t;
 
 void repeater_t_init(repeater_t* wrapper, void f(SYSTEM_ARG_REQUIREMENTS), uint32_t interval_time, uint32_t count, uint8_t destroy);
+
+typedef struct clickable_t{
+	void (*f)(SYSTEM_ARG_REQUIREMENTS);
+	int32_t recharge_counter;
+	int32_t recharge_time;
+	uint8_t toggle;
+	uint32_t w;
+	uint32_t h;
+}clickable_t;
+
+void clickable_t_init(clickable_t* clicker, void f(SYSTEM_ARG_REQUIREMENTS), int32_t recharge_time, uint32_t w, uint32_t h);
 
 #endif
