@@ -16,3 +16,23 @@ void clickable_t_init(clickable_t* clicker, void f(SYSTEM_ARG_REQUIREMENTS), int
 	clicker->w = w;
 	clicker->h = h;
 }
+
+void text_node_t_init(text_node_t* node, const char* text, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
+	node->text = text;
+	node->red = r;
+	node->green = g;
+	node->blue = b;
+	node->alpha = a;
+}
+
+void text_node_set_text(text_node_t* node, const char* text){
+	node->text = text;
+}
+
+void text_node_set_color(text_node_t* node, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
+	node->red = r;
+	node->green = g;
+	node->blue = b;
+	node->alpha = a;
+}
+

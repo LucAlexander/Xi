@@ -103,6 +103,14 @@ void std_systems(program_state* state){
 	system_t guiblit = system_init(blitable_s, 2, POSITION_C, BLITABLE_C);
 	system_add_requirement(&guiblit, 1, ENTITY_GUI);
 	system_add(state, guiblit, XI_STATE_RENDER_GUI);
+
+	system_t text_blit = system_init(text_s, 2, POSITION_C, TEXT_C);
+	system_add_filter(&blit, 1, ENTITY_GUI);
+	system_add(state, text_blit, XI_STATE_RENDER);
+
+	system_t text_guiblit = system_init(text_s, 2, POSITION_C, TEXT_C);
+	system_add_requirement(&text_guiblit, 1, ENTITY_GUI);
+	system_add(state, text_guiblit, XI_STATE_RENDER_GUI);
 }
 
 void xi_run_system_group(program_state* state, uint32_t group, uint16_t layer){

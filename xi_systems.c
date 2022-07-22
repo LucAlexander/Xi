@@ -24,6 +24,17 @@ SYSTEM(behavior_s){
 	behavior->f(SYSTEM_ARGS);
 }
 
+SYSTEM(text_s){
+	ARG(v2* position, POSITION_C);
+	ARG(text_node_t* node, TEXT_C);
+	drawTextC(xi->graphics, position->x, position->y, node->text,
+		node->red,
+		node->green,
+		node->blue,
+		node->alpha
+	);
+}
+
 SYSTEM(repeater_s){
 	ARG(repeater_t* wrapper, REPEATER_C);
 	wrapper->ticks += xi->ticks;

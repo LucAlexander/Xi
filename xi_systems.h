@@ -8,6 +8,7 @@ struct entity_data;
 SYSTEM(forces_s);
 
 SYSTEM(blitable_s);
+SYSTEM(text_s);
 
 SYSTEM(behavior_s);
 SYSTEM(repeater_s);

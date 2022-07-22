@@ -11,7 +11,8 @@
 	BEHAVIOR_C,/*logic_t*/\
 	REPEATER_C,/*repeater_t*/\
 	ANIMATOR_C,/*animator_t*/\
-	CLICKABLE_C/*clickable_t*/
+	CLICKABLE_C,/*clickable_t*/\
+	TEXT_C/*text_node_t*/
 
 #define COMPONENT_SIZES\
 	sizeof(v2),\
@@ -20,7 +21,8 @@
 	sizeof(logic_t),\
 	sizeof(repeater_t),\
 	sizeof(animator_t),\
-	sizeof(clickable_t)\
+	sizeof(clickable_t),\
+	sizeof(text_node_t)\
 	USER_COMPONENT_SIZES
 
 typedef enum COMPONENTS{
@@ -52,5 +54,17 @@ typedef struct clickable_t{
 }clickable_t;
 
 void clickable_t_init(clickable_t* clicker, void f(SYSTEM_ARG_REQUIREMENTS), int32_t recharge_time, uint32_t w, uint32_t h);
+
+typedef struct text_node_t{
+	const char* text;
+	uint8_t red;
+	uint8_t green;
+	uint8_t blue;
+	uint8_t alpha;
+}text_node_t;
+
+void text_node_t_init(text_node_t* node, const char* text, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+void text_node_set_text(text_node_t* node, const char* text);
+void text_node_set_color(text_node_t* node, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
 #endif
