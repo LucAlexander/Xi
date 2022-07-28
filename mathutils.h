@@ -25,6 +25,10 @@ typedef struct v4{
 	float h;
 }v4;
 
+uint8_t v2_equals(v2 a, v2 b);
+uint8_t v3_equals(v3 a, v3 b);
+uint8_t v4_equals(v4 a, v4 b);
+
 float lenDirX(float len, float dir);
 
 float lenDirY(float len, float dir);

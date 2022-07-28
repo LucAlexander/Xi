@@ -2,6 +2,28 @@
 #include <stdlib.h>
 #include "mathutils.h"
 
+uint8_t v2_equals(v2 a, v2 b){
+	return 
+		(a.x==b.x)&&
+		(a.y==b.y);
+}
+
+uint8_t v3_equals(v3 a, v3 b){
+	return 
+		(a.x==b.x)&&
+		(a.z==b.z)&&
+		(a.y==b.y);
+
+}
+
+uint8_t v4_equals(v4 a, v4 b){
+	return 
+		(a.x==b.x)&&
+		(a.w==b.w)&&
+		(a.h==b.h)&&
+		(a.y==b.y);
+}
+
 float lenDirX(float len, float dir){
 	return len * cos(dir*PI/180.0);
 }
