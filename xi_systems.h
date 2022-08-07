@@ -16,4 +16,8 @@ SYSTEM(clickable_s);
 
 SYSTEM(animate_s);
 
+SYSTEM(draw_entity_colliders_s);
+SYSTEM(draw_world_colliders_s);
+SYSTEM(solid_collision_s);
+
 #endif

@@ -28,6 +28,7 @@ void program_state_init(program_state* state){
 	audio_init(&state->audio);
 	inputInit(&state->user_input);
 	ecs_init(&state->ecs, COMPONENT_COUNT, COMPONENT_SIZES);
+	collision_mask_init(&state->colliders, WINDOW_W, WINDOW_H, COLLISION_MASK_DEFAULT_DEPTH);
 	state->project = NULL;
 }
 
@@ -39,6 +40,7 @@ void program_state_deinit(program_state* state){
 	graphicsClose(&state->graphics);
 	audio_close(&state->audio);
 	ecs_deinit(&state->ecs);
+	collision_mask_free(&state->colliders);
 	free(state->project);
 	state->project = NULL;
 }
@@ -49,6 +51,7 @@ xi_utils construct_xi_utils(program_state* state){
 		&state->audio,
 		&state->user_input,
 		&state->ecs,
+		&state->colliders,
 		state->project,
 		state->tick
 	};
@@ -104,6 +107,14 @@ void std_systems(program_state* state){
 	system_add_requirement(&guiblit, 1, ENTITY_GUI);
 	system_add(state, guiblit, XI_STATE_RENDER_GUI);
 
+	system_t world_colliders_blitgui = system_init(draw_entity_colliders_s, 1, COLLIDER_C);
+	system_add_filter(&world_colliders_blitgui, 1, ENTITY_GUI);
+	system_add(state, world_colliders_blitgui, XI_STATE_RENDER);
+
+	system_t entity_colliders_blitgui = system_init(draw_entity_colliders_s, 2, POSITION_C, COLLIDER_C);
+	system_add_filter(&entity_colliders_blitgui, 1, ENTITY_GUI);
+	system_add(state, entity_colliders_blitgui, XI_STATE_RENDER);
+
 	system_t text_blit = system_init(text_s, 2, POSITION_C, TEXT_C);
 	system_add_filter(&blit, 1, ENTITY_GUI);
 	system_add(state, text_blit, XI_STATE_RENDER);
@@ -111,6 +122,7 @@ void std_systems(program_state* state){
 	system_t text_guiblit = system_init(text_s, 2, POSITION_C, TEXT_C);
 	system_add_requirement(&text_guiblit, 1, ENTITY_GUI);
 	system_add(state, text_guiblit, XI_STATE_RENDER_GUI);
+
 }
 
 void xi_run_system_group(program_state* state, uint32_t group, uint16_t layer){

@@ -84,3 +84,26 @@ SYSTEM(animate_s){
 	animation->frame_time_counter -= animation->frame_time;
 	progress_animation(xi->graphics, animation);
 }
+
+SYSTEM(draw_entity_colliders_s){
+	ARG(v2* pos, POSITION_C);
+	ARG(v4* mask, COLLIDER_C);
+	v4 translated = {
+		mask->x + pos->x,
+	       	mask->y + pos->y,
+		mask->w,
+		mask->h
+	};
+	renderSetColor(xi->graphics, 255, 255, 255, 255);
+	drawRectV4(xi->graphics, translated, OUTLINE);
+	renderSetColor(xi->graphics, 0, 0, 0, 255);
+}
+
+SYSTEM(draw_world_colliders){
+	//TODO
+}
+
+SYSTEM(solid_collision_s){
+	//TODO
+	//TODO register
+}

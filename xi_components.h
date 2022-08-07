@@ -12,7 +12,8 @@
 	REPEATER_C,/*repeater_t*/\
 	ANIMATOR_C,/*animator_t*/\
 	CLICKABLE_C,/*clickable_t*/\
-	TEXT_C/*text_node_t*/
+	TEXT_C,/*text_node_t*/\
+	COLLIDER_C/*v4*/
 
 #define COMPONENT_SIZES\
 	sizeof(v2),\
@@ -22,7 +23,8 @@
 	sizeof(repeater_t),\
 	sizeof(animator_t),\
 	sizeof(clickable_t),\
-	sizeof(text_node_t)\
+	sizeof(text_node_t),\
+	sizeof(v4)\
 	USER_COMPONENT_SIZES
 
 typedef enum COMPONENTS{

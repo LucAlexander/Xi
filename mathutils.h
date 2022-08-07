@@ -25,9 +25,23 @@ typedef struct v4{
 	float h;
 }v4;
 
+typedef struct m2{
+	float x1;
+	float y1;
+	float x2;
+	float y2;
+}m2;
+
+uint8_t hash_v2(v2 key, uint32_t capacity);
+
 uint8_t v2_equals(v2 a, v2 b);
 uint8_t v3_equals(v3 a, v3 b);
 uint8_t v4_equals(v4 a, v4 b);
+uint8_t m2_equals(m2 a, m2 b);
+
+uint8_t edge_collision_v4(v4, m2);
+v2 edge_intersect(float ax, float ay, float bx, float by, m2 edge);
+v2 edge_intersect_v2(v2 a, v2 b, v2 c, v2 d);
 
 float lenDirX(float len, float dir);
 

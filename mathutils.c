@@ -1,19 +1,27 @@
 #include <math.h>
+#include <float.h>
 #include <stdlib.h>
 #include "mathutils.h"
+
+uint8_t hash_v2(v2 key, uint32_t capacity){
+	uint64_t x = key.x;
+	uint64_t y = key.y;
+	return (x << 32 | y) % capacity;
+}
 
 uint8_t v2_equals(v2 a, v2 b){
 	return 
 		(a.x==b.x)&&
-		(a.y==b.y);
+		(a.y==b.y)
+	;
 }
 
 uint8_t v3_equals(v3 a, v3 b){
 	return 
 		(a.x==b.x)&&
 		(a.z==b.z)&&
-		(a.y==b.y);
-
+		(a.y==b.y)
+	;
 }
 
 uint8_t v4_equals(v4 a, v4 b){
@@ -21,7 +29,52 @@ uint8_t v4_equals(v4 a, v4 b){
 		(a.x==b.x)&&
 		(a.w==b.w)&&
 		(a.h==b.h)&&
-		(a.y==b.y);
+		(a.y==b.y)
+	;
+}
+
+uint8_t m2_equals(m2 a, m2 b){
+	return
+		(a.x1==b.x1)&&
+		(a.x2==b.x2)&&
+		(a.y1==b.y1)&&
+		(a.y2==b.y2)
+	;
+}
+
+uint8_t edge_collision_v4(v4 mask, m2 edge){
+	float right = mask.x + mask.w;
+	float down = mask.y + mask.h;
+	v2 point_sentinel = {FLT_MAX, FLT_MAX};
+	return !(
+		v2_equals(edge_intersect(mask.x, mask.y, right, mask.y, edge), point_sentinel) ||
+		v2_equals(edge_intersect(mask.x, mask.y, mask.x, down, edge), point_sentinel) ||
+		v2_equals(edge_intersect(right, mask.y, right, down, edge), point_sentinel) ||
+		v2_equals(edge_intersect(mask.x, down, right, down, edge), point_sentinel)
+	);
+}
+
+v2 edge_intersect_v2(v2 a, v2 b, v2 c, v2 d){
+	m2 edge = {c.x, c.y, d.x, d.y};
+	return edge_intersect(a.x, a.y, b.x, b.y, edge);
+}
+
+v2 edge_intersect(float ax, float ay, float bx, float by, m2 edge){
+	float a1 = by - ay;
+	float b1 = ax - bx;
+	float c1 = a1*(ax) + b1*(ay);
+	float a2 = edge.y2 - edge.y1;
+	float b2 = edge.x1 - edge.x2;
+	float c2 = a2*(edge.x1) + b2*(edge.y1);
+	float result = a1*b2 - a2*b1;
+	if (result == 0){
+		v2 point = {FLT_MAX, FLT_MAX};
+		return point;
+	}
+	float x = (b2*c1 - b1*c2)/result;
+	float y = (a1*c2 - a2*c1)/result;
+	v2 point = {x, y};
+	return point;
 }
 
 float lenDirX(float len, float dir){

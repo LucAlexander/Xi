@@ -6,6 +6,7 @@
 #include "inpututils.h"
 #include "entities.h"
 #include "vector.h"
+#include "collision_mask.h"
 
 #include <inttypes.h>
 
@@ -37,6 +38,7 @@ typedef struct program_state{
 	AudioHandler audio;
 	input user_input;
 	entity_data ecs;
+	collision_mask colliders;
 	struct project_structs* project;
 }program_state;
 
@@ -45,6 +47,7 @@ typedef struct xi_utils{
 	AudioHandler* audio;
 	input* user_input;
 	entity_data* ecs;
+	collision_mask* colliders;
 	struct project_structs* project;
 	uint32_t ticks;
 }xi_utils;
