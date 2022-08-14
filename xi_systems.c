@@ -11,6 +11,8 @@ SYSTEM(forces_s){
 	ARG(v2* forces, FORCES_C);
 	position->x += forces->x;
 	position->y += forces->y;
+	forces->x = 0;
+	forces->y = 0;
 }
 
 SYSTEM(blitable_s){
@@ -72,6 +74,14 @@ SYSTEM(clickable_s){
 	}
 }
 
+SYSTEM(draw_clickable_s){
+	ARG(v2* position, POSITION_C);
+	ARG(clickable_t* button, CLICKABLE_C);
+	renderSetColor(xi->graphics, 0, 255, 0, 255);
+	drawRect(xi->graphics, position->x, position->y, button->w, button->h, OUTLINE);
+	renderSetColor(xi->graphics, 0, 0, 0, 255);
+}
+
 SYSTEM(animate_s){
 	ARG(Blitable* sprite, BLITABLE_C);
 	ARG(animator_t* animation, ANIMATOR_C);
@@ -99,11 +109,75 @@ SYSTEM(draw_entity_colliders_s){
 	renderSetColor(xi->graphics, 0, 0, 0, 255);
 }
 
-SYSTEM(draw_world_colliders){
-	//TODO
+SYSTEM(draw_world_colliders_s){
+	renderSetColor(xi->graphics, 255, 255, 255, 255);
+	spacial_quadtree_node_t* root = xi->colliders;
+	vquadnode_t q = vquadnode_tInit();
+	vquadnode_tPushBack(&q, root);
+	while(q.size != 0){
+		root = vquadnode_tPop(&q);
+		if (root->state != INTERNAL_NODE){
+			if (root->state != 0){
+				renderSetColor(xi->graphics, 255, 0, 0, 128);
+				drawRectV4(xi->graphics, root->mask, FILL);
+				renderSetColor(xi->graphics, 255, 255, 255, 255);
+			}
+			drawRectV4(xi->graphics, root->mask, OUTLINE);
+			continue;
+		}
+		vquadnode_tInsert(&q, 0, root->a);
+		vquadnode_tInsert(&q, 0, root->b);
+		vquadnode_tInsert(&q, 0, root->c);
+		vquadnode_tInsert(&q, 0, root->d);
+	}
+	vquadnode_tFree(&q);
+	renderSetColor(xi->graphics, 0, 0, 0, 255);
 }
 
 SYSTEM(solid_collision_s){
-	//TODO
-	//TODO register
+	ARG(v2* pos, POSITION_C);
+	ARG(v2* forces, FORCES_C);
+	ARG(v4* mask, COLLIDER_C);
+	v4 translated = {
+		mask->x + pos->x,
+		mask->y + pos->y,
+		mask->x + pos->x + mask->w,
+		mask->y + pos->y + mask->h
+	};
+	vv4_t colliders = retrieve_quadtree_collisions(xi->colliders, pos->x, pos->y);
+	v4 t = translated;
+	t.x += forces->x;
+	t.w += forces->x;
+	if (collides_with_mask(t, colliders)){
+		uint32_t increment = sign(forces->x);
+		int32_t count = 0;
+		t.x -= forces->x-increment;
+		t.w -= forces->x-increment;
+		while (collides_with_mask(t, colliders)){
+			t.x += increment;
+			t.w += increment;
+			count++;
+		}
+		forces->x = count*increment;
+	}
+	pos->x += forces->x;
+	forces->x = 0;
+	t = translated;
+	t.y += forces->y;
+	t.h += forces->y;
+	if (collides_with_mask(t, colliders)){
+		uint32_t increment = sign(forces->y);
+		int32_t count = 0;
+		t.y -= forces->y-increment;
+		t.h -= forces->y-increment;
+		while (collides_with_mask(t, colliders)){
+			t.y += increment;
+			t.h += increment;
+			count++;
+		}
+		forces->y = count*increment;
+	}
+	pos->y += forces->y;
+	forces->y = 0;
+	vv4_tFree(&colliders);
 }

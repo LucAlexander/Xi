@@ -61,6 +61,9 @@ uint8_t pointInRectV2(v2, v4);
 uint8_t pointInRectB(float x, float y, v4);
 uint8_t pointInRectV2B(v2, v4);
 
+uint8_t rectCollides(v4, v4);
+uint8_t rectCollidesB(v4, v4);
+
 void approachZero(int32_t* val, int32_t amount);
 void approachZeroF(float* val, float amount);
 

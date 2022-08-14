@@ -43,14 +43,12 @@ uint8_t m2_equals(m2 a, m2 b){
 }
 
 uint8_t edge_collision_v4(v4 mask, m2 edge){
-	float right = mask.x + mask.w;
-	float down = mask.y + mask.h;
 	v2 point_sentinel = {FLT_MAX, FLT_MAX};
 	return !(
-		v2_equals(edge_intersect(mask.x, mask.y, right, mask.y, edge), point_sentinel) ||
-		v2_equals(edge_intersect(mask.x, mask.y, mask.x, down, edge), point_sentinel) ||
-		v2_equals(edge_intersect(right, mask.y, right, down, edge), point_sentinel) ||
-		v2_equals(edge_intersect(mask.x, down, right, down, edge), point_sentinel)
+		v2_equals(edge_intersect(mask.x, mask.y, mask.w, mask.y, edge), point_sentinel) &&
+		v2_equals(edge_intersect(mask.x, mask.y, mask.x, mask.h, edge), point_sentinel) &&
+		v2_equals(edge_intersect(mask.w, mask.y, mask.w, mask.h, edge), point_sentinel) &&
+		v2_equals(edge_intersect(mask.x, mask.h, mask.w, mask.h, edge), point_sentinel)
 	);
 }
 
@@ -144,6 +142,20 @@ uint8_t pointInRectB(float x, float y, v4 r){
 
 uint8_t pointInRectV2B(v2 a, v4 b){
 	return pointInRectB(a.x, a.y, b);
+}
+
+uint8_t rectCollides(v4 a, v4 b){
+	v4 ab = {a.x, a.y, a.x + a.w, a.y + a.h};
+	v4 bb = {b.x, b.y, b.x + b.w, b.y + b.h};
+	return rectCollidesB(ab, bb);
+}
+
+uint8_t rectCollidesB(v4 a, v4 b){
+	return 
+		( (a.x > b.x && a.x < b.w) && (a.y > b.y && a.y < b.h) ) || 
+		( (a.w > b.x && a.w < b.w) && (a.y > b.y && a.y < b.h) ) ||
+		( (a.x > b.x && a.x < b.w) && (a.h > b.y && a.h < b.h) ) || 
+		( (a.w > b.x && a.w < b.w) && (a.h > b.y && a.h < b.h) );
 }
 
 void approachZero(int32_t* val, int32_t amount){

@@ -13,11 +13,13 @@ SYSTEM(text_s);
 SYSTEM(behavior_s);
 SYSTEM(repeater_s);
 SYSTEM(clickable_s);
+SYSTEM(draw_clickable_s);
 
 SYSTEM(animate_s);
 
 SYSTEM(draw_entity_colliders_s);
 SYSTEM(draw_world_colliders_s);
+
 SYSTEM(solid_collision_s);
 
 #endif
