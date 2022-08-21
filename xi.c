@@ -28,7 +28,7 @@ void program_state_init(program_state* state){
 	audio_init(&state->audio);
 	inputInit(&state->user_input);
 	ecs_init(&state->ecs, COMPONENT_COUNT, COMPONENT_SIZES);
-	state->colliders = spacial_quadtree_node_init(0);
+	state->colliders = generate_collision_mask(XI_SPRITE"collision_mask.png");
 	state->project = NULL;
 }
 

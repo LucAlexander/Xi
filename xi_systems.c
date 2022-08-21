@@ -105,6 +105,7 @@ SYSTEM(draw_entity_colliders_s){
 		mask->h
 	};
 	renderSetColor(xi->graphics, 255, 255, 255, 255);
+	drawRectB(xi->graphics, pos->x-1, pos->y-1, pos->x+1, pos->y+1, FILL);
 	drawRectV4(xi->graphics, translated, OUTLINE);
 	renderSetColor(xi->graphics, 0, 0, 0, 255);
 }
@@ -117,12 +118,12 @@ SYSTEM(draw_world_colliders_s){
 	while(q.size != 0){
 		root = vquadnode_tPop(&q);
 		if (root->state != INTERNAL_NODE){
+			renderSetColor(xi->graphics, 255, 255, 255, 128);
 			if (root->state != 0){
 				renderSetColor(xi->graphics, 255, 0, 0, 128);
-				drawRectV4(xi->graphics, root->mask, FILL);
-				renderSetColor(xi->graphics, 255, 255, 255, 255);
 			}
 			drawRectV4(xi->graphics, root->mask, OUTLINE);
+			renderSetColor(xi->graphics, 255, 255, 255, 255);
 			continue;
 		}
 		vquadnode_tInsert(&q, 0, root->a);
@@ -144,16 +145,17 @@ SYSTEM(solid_collision_s){
 		mask->x + pos->x + mask->w,
 		mask->y + pos->y + mask->h
 	};
-	vv4_t colliders = retrieve_quadtree_collisions(xi->colliders, pos->x, pos->y);
 	v4 t = translated;
 	t.x += forces->x;
 	t.w += forces->x;
-	if (collides_with_mask(t, colliders)){
-		uint32_t increment = sign(forces->x);
+	vv4_t colliders = vv4_tInit();
+	find_colliding_partitions(xi->colliders, t, &colliders);
+	if (collides_with_mask(t, &colliders)){
+		int32_t increment = sign(forces->x);
 		int32_t count = 0;
 		t.x -= forces->x-increment;
 		t.w -= forces->x-increment;
-		while (collides_with_mask(t, colliders)){
+		while (!collides_with_mask(t, &colliders)){
 			t.x += increment;
 			t.w += increment;
 			count++;
@@ -165,12 +167,14 @@ SYSTEM(solid_collision_s){
 	t = translated;
 	t.y += forces->y;
 	t.h += forces->y;
-	if (collides_with_mask(t, colliders)){
-		uint32_t increment = sign(forces->y);
+	vv4_tClear(&colliders);
+	find_colliding_partitions(xi->colliders, t, &colliders);
+	if (collides_with_mask(t, &colliders)){
+		int32_t increment = sign(forces->y);
 		int32_t count = 0;
 		t.y -= forces->y-increment;
 		t.h -= forces->y-increment;
-		while (collides_with_mask(t, colliders)){
+		while (!collides_with_mask(t, &colliders)){
 			t.y += increment;
 			t.h += increment;
 			count++;
