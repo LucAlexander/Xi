@@ -77,8 +77,9 @@ SYSTEM(clickable_s){
 SYSTEM(draw_clickable_s){
 	ARG(v2* position, POSITION_C);
 	ARG(clickable_t* button, CLICKABLE_C);
+	view v = renderGetView(xi->graphics);
 	renderSetColor(xi->graphics, 0, 255, 0, 255);
-	drawRect(xi->graphics, position->x, position->y, button->w, button->h, OUTLINE);
+	drawRect(xi->graphics, position->x+v.x, position->y+v.y, button->w, button->h, OUTLINE);
 	renderSetColor(xi->graphics, 0, 0, 0, 255);
 }
 
@@ -105,7 +106,7 @@ SYSTEM(draw_entity_colliders_s){
 		mask->h
 	};
 	renderSetColor(xi->graphics, 255, 255, 255, 255);
-	drawRectB(xi->graphics, pos->x-1, pos->y-1, pos->x+1, pos->y+1, FILL);
+	drawRect(xi->graphics, pos->x-1, pos->y-1, 2, 2, FILL);
 	drawRectV4(xi->graphics, translated, OUTLINE);
 	renderSetColor(xi->graphics, 0, 0, 0, 255);
 }
@@ -118,12 +119,11 @@ SYSTEM(draw_world_colliders_s){
 	while(q.size != 0){
 		root = vquadnode_tPop(&q);
 		if (root->state != INTERNAL_NODE){
-			renderSetColor(xi->graphics, 255, 255, 255, 128);
 			if (root->state != 0){
 				renderSetColor(xi->graphics, 255, 0, 0, 128);
+				drawRectV4(xi->graphics, root->mask, OUTLINE);
+				renderSetColor(xi->graphics, 255, 255, 255, 255);
 			}
-			drawRectV4(xi->graphics, root->mask, OUTLINE);
-			renderSetColor(xi->graphics, 255, 255, 255, 255);
 			continue;
 		}
 		vquadnode_tInsert(&q, 0, root->a);

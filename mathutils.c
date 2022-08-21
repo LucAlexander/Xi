@@ -151,11 +151,7 @@ uint8_t rectCollides(v4 a, v4 b){
 }
 
 uint8_t rectCollidesB(v4 a, v4 b){
-	return 
-		( (a.x > b.x && a.x < b.w) && (a.y > b.y && a.y < b.h) ) || 
-		( (a.w > b.x && a.w < b.w) && (a.y > b.y && a.y < b.h) ) ||
-		( (a.x > b.x && a.x < b.w) && (a.h > b.y && a.h < b.h) ) || 
-		( (a.w > b.x && a.w < b.w) && (a.h > b.y && a.h < b.h) );
+	return !((a.x > b.w || a.w < b.x) || (a.y > b.h || a.h < b.y));
 }
 
 void approachZero(int32_t* val, int32_t amount){
