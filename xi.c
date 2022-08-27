@@ -113,7 +113,7 @@ void xi_run_system_group(program_state* state, uint32_t group){
 	vsys_t system_list = state->system_group[group];
 	xi_utils xi = construct_xi_utils(state);
 	for (i = 0;i<system_list.size;++i){
-		system_run(vsys_tGet(&system_list, i), &xi);
+		system_run(system_list.data[i], &xi);
 	}
 }
 
@@ -123,7 +123,7 @@ void xi_run_system_group_queued(program_state* state, uint32_t group){
 	vsys_t system_list = state->system_group[group];
 	xi_utils xi = construct_xi_utils(state);
 	for (i = 0;i<system_list.size;++i){
-		system_run_queued(vsys_tGet(&system_list, i), &xi, &xi.graphics->render_order);
+		system_run_queued(system_list.data[i], &xi, &xi.graphics->render_order);
 	}
 }
 

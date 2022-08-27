@@ -92,6 +92,21 @@ float scaleOnY(GraphicsHandler* ghandle, float val){
 	return val/ghandle->spriteScaleY;
 }
 
+uint8_t render_in_view(GraphicsHandler* ghandle, float x, float y, float w, float h){
+	v4 rect = {x, y, w, h};
+	return render_in_view_v4(ghandle, rect);
+}
+
+uint8_t render_in_view_v4(GraphicsHandler* ghandle, v4 rect){
+	v4 v = {
+		ghandle->renderView.px,
+		ghandle->renderView.py,
+		ghandle->renderView.pw,
+		ghandle->renderView.ph,
+	};
+	return rectCollides(v, rect);
+}
+
 void renderSetView(GraphicsHandler* ghandle, view v){
 	ghandle->renderView = v;
 	const SDL_Rect port = {v.px, v.py, v.pw, v.ph};
@@ -336,21 +351,34 @@ void progress_animation(GraphicsHandler* ghandle, animator_t* animator){
 }
 
 void blitSurface(GraphicsHandler* ghandle, SDL_Texture* texture, SDL_Rect* srcRect, SDL_Rect destRect){
+	if (!render_in_view(ghandle, destRect.x, destRect.y, destRect.w, destRect.h)){
+		return;
+	}
 	formatDestRectToView(ghandle, &destRect);
 	SDL_RenderCopy(ghandle->renderer, texture, srcRect, &destRect);
 }
 
 void blitSurfaceEX(GraphicsHandler* ghandle, SDL_Texture* texture, SDL_Rect* srcRect, SDL_Rect destRect, double angle, SDL_Point* center, SDL_RendererFlip flip){
+	if (!render_in_view(ghandle, destRect.x, destRect.y, destRect.w, destRect.h)){
+		return;
+	}
 	formatDestRectToView(ghandle, &destRect);
 	SDL_RenderCopyEx(ghandle->renderer, texture, srcRect, &destRect, angle, center, flip);
 }
 
 void blitSurfaceF(GraphicsHandler* ghandle, SDL_Texture* texture, SDL_Rect* srcRect, SDL_FRect destRect){
+	if (!render_in_view(ghandle, destRect.x, destRect.y, destRect.w, destRect.h)){
+		return;
+	}
 	formatDestFRectToView(ghandle, &destRect);
+
 	SDL_RenderCopyF(ghandle->renderer, texture, srcRect, &destRect);
 }
 
 void blitSurfaceEXF(GraphicsHandler* ghandle, SDL_Texture* texture, SDL_Rect* srcRect, SDL_FRect destRect, double angle, SDL_FPoint* center, SDL_RendererFlip flip){
+	if (!render_in_view(ghandle, destRect.x, destRect.y, destRect.w, destRect.h)){
+		return;
+	}
 	formatDestFRectToView(ghandle, &destRect);
 	SDL_RenderCopyExF(ghandle->renderer, texture, srcRect, &destRect, angle, center, flip);
 }
@@ -395,18 +423,13 @@ void drawRectV4B(GraphicsHandler* ghandle, v4 r, uint8_t p){
 }
 
 void drawRectB(GraphicsHandler* ghandle, float x1, float y1, float x2, float y2, uint8_t p){
-	SDL_FRect bound = {
-		x1-ghandle->renderView.x,
-		y1-ghandle->renderView.y,
-	       	x2-x1-ghandle->renderView.x,
-	       	y2-y1-ghandle->renderView.y
-	};
-	if (p & FILL){
-		SDL_RenderFillRectF(ghandle->renderer, &bound);
-	}
-	if (p & OUTLINE){
-		SDL_RenderDrawRectF(ghandle->renderer, &bound);
-	}
+	drawRect(
+		ghandle, 
+		x1,
+		y1, 
+		x2-x1-ghandle->renderView.x,
+		y2-y1-ghandle->renderView.y,
+	p);
 }
 
 void fontHandlerInit(GraphicsHandler* ghandle){
@@ -519,6 +542,6 @@ void queryTextSize(GraphicsHandler* ghandle, const char* text, int32_t* w, int32
 void texture_arena_release(GraphicsHandler* ghandle){
 	uint32_t i;
 	for (i = 0;i<ghandle->texture_arena.size;++i){
-		SDL_DestroyTexture(vecT_tGet(&ghandle->texture_arena, i));
+		SDL_DestroyTexture(ghandle->texture_arena.data[i]);
 	}
 }

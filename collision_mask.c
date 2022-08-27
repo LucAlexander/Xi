@@ -37,7 +37,7 @@ vu32_t get_pixel_color_data(int32_t bpp, uint8_t* pixels, int32_t w, int32_t h){
 }
 
 spacial_quadtree_node_t* partition_pixel_color_data_to_quadtree(uint32_t x_start, uint32_t y_start, uint32_t w, uint32_t h, vu32_t pixel_colors, uint32_t depth, uint32_t absw){
-	uint32_t color = vu32_tGet(&pixel_colors, x_start + (y_start*absw));
+	uint32_t color = pixel_colors.data[x_start + (y_start*absw)];
 	spacial_quadtree_node_t* node = spacial_quadtree_node_init(color);
 	node->depth = depth;
 	node->mask.x = x_start;
@@ -51,7 +51,7 @@ spacial_quadtree_node_t* partition_pixel_color_data_to_quadtree(uint32_t x_start
 	for (y=y_start;y<y_start+h;++y){
 		offset = y*absw;
 		for (x=x_start;x<x_start+w;++x){
-			if (vu32_tGet(&pixel_colors, x+offset) != color){
+			if (pixel_colors.data[x+offset] != color){
 				node->state = INTERNAL_NODE;
 				uint32_t w2 = w/2;
 				uint32_t h2 = h/2;
@@ -170,7 +170,7 @@ spacial_quadtree_node_t* retrieve_quadtree_node(spacial_quadtree_node_t* root, u
 
 uint8_t collides_with_mask(v4 calling, vv4_t* parts){
 	for (uint32_t i = 0;i<parts->size;++i){
-		v4 mask = vv4_tGet(parts, i);
+		v4 mask = parts->data[i];
 		mask.w += mask.x;
 		mask.h += mask.y;
 		if (rectCollidesB(calling, mask)){

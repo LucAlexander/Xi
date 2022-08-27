@@ -88,6 +88,9 @@ void renderSetView(GraphicsHandler* ghandle, view v);
 view renderGetView(GraphicsHandler* ghandle);
 void renderSetViewAbsolute(GraphicsHandler* ghandle);
 
+uint8_t render_in_view(GraphicsHandler* ghandle, float x, float y, float x2, float y2);
+uint8_t render_in_view_v4(GraphicsHandler* ghandle, struct v4 rect);
+
 void renderSetSpriteScale(GraphicsHandler* ghandle, float scaleX, float scaleY);
 float scaleOnX(GraphicsHandler* ghandle, float val);
 float scaleOnY(GraphicsHandler* ghandle, float val);
