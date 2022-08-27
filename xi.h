@@ -21,7 +21,6 @@ typedef enum PROGRAM_STATE{
 	XI_STATE_UPDATE,
 	XI_STATE_UPDATE_POST,
 	XI_STATE_RENDER,
-	XI_STATE_RENDER_GUI,
 	XI_SYSTEM_STATE_COUNT,
 	XI_STATE_INIT,
 	XI_STATE_DEINIT
@@ -59,9 +58,8 @@ void reset_arena(xi_utils* xi);
 
 void xi_init(program_state* state);
 void xi_deinit(program_state* state);
-void xi_run_system_group(program_state* state, uint32_t group, uint16_t layer);
-
-void run_render_systems(program_state* state, uint32_t group);
+void xi_run_system_group(program_state* state, uint32_t group);
+void xi_run_system_group_queued(program_state* state, uint32_t group);
 
 void tick_update(program_state* state);
 void tick_reset(program_state* state);

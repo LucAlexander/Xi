@@ -4,9 +4,12 @@
 #include <inttypes.h>
 
 #include "entities.h"
-#include "xi.h"
+
+struct xi_utils;
+struct renderq_t;
 
 #define SYSTEM_ARG_REQUIREMENTS struct xi_utils* xi, uint32_t id 
+#define SYSTEM_ARG_DATA struct xi_utils* xi; uint32_t id;
 #define SYSTEM_ARGS xi, id
 
 #define SYSTEM(name) void name(SYSTEM_ARG_REQUIREMENTS)
@@ -30,6 +33,7 @@ void system_add_magnet(system_t* sys, uint32_t n, ...);
 void system_remove_magnet(system_t* sys, uint32_t n, ...);
 uint8_t system_filter(system_t sys, uint64_t targetFlag);
 uint8_t system_mask_compare(uint64_t reference, uint64_t candidate);
-void system_run(system_t s, xi_utils* xi, uint16_t layer);
+void system_run(system_t s, struct xi_utils* xi);
+void system_run_queued(system_t s, struct xi_utils* xi, struct renderq_t* render_order);
 
 #endif

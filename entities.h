@@ -14,8 +14,7 @@ struct v2;
 
 typedef enum FLAGS{
 	ENTITY_DEACTIVATED=1,
-	ENTITY_GUI=2,
-	ENTITY_SOLID=3
+	ENTITY_SOLID=2
 }FLAGS;
 
 typedef struct entity_data{

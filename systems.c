@@ -96,16 +96,43 @@ uint8_t system_mask_compare(uint64_t reference, uint64_t candidate){
 	return (reference & candidate) == reference;
 }
 
-void system_run(system_t s, xi_utils* xi, uint16_t layer){
+void system_run(system_t s, xi_utils* xi){
 	uint32_t id;
 	uint32_t n = xi->ecs->entities;
 	for (id = 0;id<n;++id){
 		if (
-		system_mask_compare(s.mask, xi->ecs->masks[id]) &&
-		system_filter(s, xi->ecs->flags[id]) &&
-		((layer == 0) || (layer == xi->ecs->layers[id]))
+			system_mask_compare(s.mask, xi->ecs->masks[id]) &&
+			system_filter(s, xi->ecs->flags[id])
 		){
 			s.f(SYSTEM_ARGS);
 		}
 	}
+}
+
+void system_run_queued(system_t s, xi_utils* xi, renderq_t* render_order){
+	uint32_t id;
+	uint32_t n = xi->ecs->entities;
+	for (id = 0;id<n;++id){
+		if (
+			system_mask_compare(s.mask, xi->ecs->masks[id]) &&
+			system_filter(s, xi->ecs->flags[id])
+		){
+			renderq_entry_t args = {SYSTEM_ARGS, s.f};
+			renderq_insert(render_order, entity_get_layer(xi->ecs, id), args);
+		}
+	}
+	uint8_t gui = 0;
+	view original = renderGetView(xi->graphics);
+	while (render_order->size != 0){
+		if ((renderq_min(render_order) >= RENDER_GUI_DEPTH) &&( !gui)){
+			renderSetViewAbsolute(xi->graphics);
+			gui = 1;
+		}
+		renderq_entry_t data = renderq_pop(render_order);
+		data.f(data.xi, data.id);
+	}
+	if (gui){
+		renderSetView(xi->graphics, original);
+	}
+
 }

@@ -9,6 +9,7 @@
 HASHMAP_SOURCE(FontMap, const char*, TTF_Font*, hashS)
 HASHMAP_SOURCE(Animations, const char*, animation_t, hashS)
 VECTOR_SOURCE(vecT_t, SDL_Texture*)
+MIN_PQ_SOURCE(renderq, renderq_entry_t)
 
 void graphicsInit(GraphicsHandler* ghandle, uint16_t width, uint16_t height, const char* windowTitle){
 	ghandle->renderScale = RENDER_SCALE_NEAREST;
@@ -37,9 +38,11 @@ void graphicsInit(GraphicsHandler* ghandle, uint16_t width, uint16_t height, con
 	fileLoaderInit(&ghandle->floader);
 	fontHandlerInit(ghandle);
 	ghandle->animations = AnimationsInit();
+	ghandle->render_order = renderq_init();
 }
 
 void graphicsClose(GraphicsHandler* ghandle){
+	renderq_free(&ghandle->render_order);
 	AnimationsFree(&ghandle->animations);
 	texture_arena_release(ghandle);
 	vecT_tFree(&ghandle->texture_arena);

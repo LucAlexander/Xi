@@ -63,12 +63,6 @@ void xi_init(program_state* state){
 	srand(time(NULL));
 	loadFont(&state->graphics, "../fnt/arcade.TTF", "default");
 	setFont(&state->graphics, "default");
-	view v = {
-		0,        0,
-		0,        0,
-		WINDOW_W, WINDOW_H
-	};
-	renderSetView(&state->graphics, v);
 	std_systems(state);
 	xi_utils xi = construct_xi_utils(state);
 	xisetup(&xi);
@@ -97,6 +91,7 @@ void std_systems(program_state* state){
 	system_add(state, system_init(repeater_s, 1, REPEATER_C), XI_STATE_UPDATE);
 	system_add(state, system_init(animate_s, 2, BLITABLE_C, ANIMATOR_C), XI_STATE_UPDATE);
 	system_add(state, system_init(clickable_s, 2, POSITION_C, CLICKABLE_C), XI_STATE_UPDATE);
+
 	system_t forces_nonsolid = system_init(forces_s, 2, POSITION_C, FORCES_C);
 	system_add_filter(&forces_nonsolid, 1, ENTITY_SOLID);
 	system_add(state, forces_nonsolid, XI_STATE_UPDATE);
@@ -105,59 +100,31 @@ void std_systems(program_state* state){
 	system_add_requirement(&forces_solid, 1, ENTITY_SOLID);
 	system_add(state, forces_solid, XI_STATE_UPDATE);
 
-	system_t blit = system_init(blitable_s, 2, POSITION_C, BLITABLE_C);
-	system_add_filter(&blit, 1, ENTITY_GUI);
-	system_add(state, blit, XI_STATE_RENDER);
-
-	system_t guiblit = system_init(blitable_s, 2, POSITION_C, BLITABLE_C);
-	system_add_requirement(&guiblit, 1, ENTITY_GUI);
-	system_add(state, guiblit, XI_STATE_RENDER_GUI);
-
-	system_t world_colliders_blitgui = system_init(draw_world_colliders_s, 1, SINGLE_RUN_CONTROLLER_C);
-	system_add_filter(&world_colliders_blitgui, 1, ENTITY_GUI);
-	system_add(state, world_colliders_blitgui, XI_STATE_RENDER);
-
-	system_t entity_colliders_blitgui = system_init(draw_entity_colliders_s, 2, POSITION_C, COLLIDER_C);
-	system_add_filter(&entity_colliders_blitgui, 1, ENTITY_GUI);
-	system_add(state, entity_colliders_blitgui, XI_STATE_RENDER);
-
-	system_t button_colliders_blitgui = system_init(draw_clickable_s, 2, POSITION_C, CLICKABLE_C);
-	system_add_requirement(&button_colliders_blitgui, 1, ENTITY_GUI);
-	system_add(state, button_colliders_blitgui, XI_STATE_RENDER);
-
-	system_t text_blit = system_init(text_s, 2, POSITION_C, TEXT_C);
-	system_add_filter(&blit, 1, ENTITY_GUI);
-	system_add(state, text_blit, XI_STATE_RENDER);
-
-	system_t text_guiblit = system_init(text_s, 2, POSITION_C, TEXT_C);
-	system_add_requirement(&text_guiblit, 1, ENTITY_GUI);
-	system_add(state, text_guiblit, XI_STATE_RENDER_GUI);
-
+	system_add(state, system_init(blitable_s, 2, POSITION_C, BLITABLE_C), XI_STATE_RENDER);
+	system_add(state, system_init(draw_world_colliders_s, 1, SINGLE_RUN_CONTROLLER_C), XI_STATE_RENDER);
+	system_add(state, system_init(draw_entity_colliders_s, 2, POSITION_C, COLLIDER_C), XI_STATE_RENDER);
+	system_add(state, system_init(draw_clickable_s, 2, POSITION_C, CLICKABLE_C), XI_STATE_RENDER);
+	system_add(state, system_init(text_s, 2, POSITION_C, TEXT_C), XI_STATE_RENDER);
 }
 
-void xi_run_system_group(program_state* state, uint32_t group, uint16_t layer){
+void xi_run_system_group(program_state* state, uint32_t group){
 	state->state = group;
 	uint32_t i;
 	vsys_t system_list = state->system_group[group];
 	xi_utils xi = construct_xi_utils(state);
 	for (i = 0;i<system_list.size;++i){
-		system_run(vsys_tGet(&system_list, i), &xi, layer);
+		system_run(vsys_tGet(&system_list, i), &xi);
 	}
 }
 
-void run_render_systems(program_state* state, uint32_t group){
-	uint32_t i, n = state->ecs.entities;
-	mu32u8_t map = mu32u8_tInit();
-	for (i = 0;i<n;++i){
-		mu32u8_tPush(&map, state->ecs.layers[i], 1);
+void xi_run_system_group_queued(program_state* state, uint32_t group){
+	state->state = group;
+	uint32_t i;
+	vsys_t system_list = state->system_group[group];
+	xi_utils xi = construct_xi_utils(state);
+	for (i = 0;i<system_list.size;++i){
+		system_run_queued(vsys_tGet(&system_list, i), &xi, &xi.graphics->render_order);
 	}
-	n = map.size;
-	uint32_t* layers = mu32u8_tGetKeySet(&map);
-	mu32u8_tFree(&map);
-	for (i = 0;i<n;++i){
-		xi_run_system_group(state, group, i);
-	}
-	free(layers);
 }
 
 void tick_update(program_state* state){
@@ -185,17 +152,13 @@ void do_frame_try(program_state* state){
 	if (!tick(state)){
 		return;
 	}
-	xi_run_system_group(state, XI_STATE_UPDATE_PRE, 0);
-	xi_run_system_group(state, XI_STATE_UPDATE, 0);
-	xi_run_system_group(state, XI_STATE_UPDATE_POST, 0);
+	xi_run_system_group(state, XI_STATE_UPDATE_PRE);
+	xi_run_system_group(state, XI_STATE_UPDATE);
+	xi_run_system_group(state, XI_STATE_UPDATE_POST);
 	newInputFrame(&state->user_input);
 	renderClear(&state->graphics);
 	renderSetColor(&state->graphics, 0, 0, 0, 255);
-	run_render_systems(state, XI_STATE_RENDER);
-	view world = renderGetView(&state->graphics);
-	renderSetViewAbsolute(&state->graphics);
-	run_render_systems(state, XI_STATE_RENDER_GUI);
-	renderSetView(&state->graphics, world);
+	xi_run_system_group_queued(state, XI_STATE_RENDER);
 	renderFlip(&state->graphics);
 	tick_reset(state);
 }

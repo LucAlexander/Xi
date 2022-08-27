@@ -8,7 +8,12 @@
 
 #include "hashMap.h"
 #include "vector.h"
+#include "minpq.h"
+
 #include "sdlfileutils.h"
+#include "systems.h"
+
+#define RENDER_GUI_DEPTH 10000
 
 struct v2;
 struct v4;
@@ -31,9 +36,15 @@ typedef struct animation_t{
 	int32_t x, y, z;
 }animation_t;
 
+typedef struct renderq_entry_t{
+	SYSTEM_ARG_DATA;
+	void (*f)(SYSTEM_ARG_REQUIREMENTS);
+}renderq_entry_t;
+
 HASHMAP(FontMap, const char*, TTF_Font*)
 HASHMAP(Animations, const char*, animation_t)
 VECTOR(vecT_t, SDL_Texture*)
+MIN_PQ(renderq, renderq_entry_t)
 
 typedef struct fontHandler{
 	char* activeFont;
@@ -60,6 +71,7 @@ typedef struct GraphicsHandler{
 	fileLoader floader;
 	vecT_t texture_arena;
 	Animations animations;
+	renderq_t render_order;
 }GraphicsHandler;
 
 void renderSetScaleQuality(GraphicsHandler* ghandle, RENDER_SCALE_QUALITY hint);
