@@ -155,8 +155,8 @@ void tick_reset(program_state* state){
 	state->tick = 0;
 }
 
-uint8_t tick(program_state* state){
-	return state->tick >= TICK_TIME;
+uint8_t tick(uint32_t ticks){
+	return ticks >= TICK_TIME;
 }
 
 uint32_t frame_time(program_state* state){
@@ -168,7 +168,7 @@ void do_frame_try(program_state* state){
 		read_user_input(state);
 	}
 	tick_update(state);
-	if (!tick(state)){
+	if (!tick(state->tick)){
 		return;
 	}
 	xi_run_system_group(state, XI_STATE_UPDATE_PRE);

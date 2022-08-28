@@ -69,7 +69,7 @@ void xi_persistent(SYSTEM_ARG_REQUIREMENTS);
 
 void tick_update(program_state* state);
 void tick_reset(program_state* state);
-uint8_t tick(program_state* state);
+uint8_t tick(uint32_t ticks);
 uint32_t frame_time(program_state* state);
 
 void do_frame_try(program_state* state);
