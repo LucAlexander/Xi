@@ -7,6 +7,7 @@
 #include "entities.h"
 #include "vector.h"
 #include "collision_mask.h"
+#include "systems.h"
 
 #include <inttypes.h>
 
@@ -39,6 +40,7 @@ typedef struct program_state{
 	entity_data ecs;
 	spacial_quadtree_node_t* colliders;
 	struct project_structs* project;
+	uint8_t debug;
 }program_state;
 
 typedef struct xi_utils{
@@ -49,6 +51,7 @@ typedef struct xi_utils{
 	spacial_quadtree_node_t* colliders;
 	struct project_structs* project;
 	uint32_t ticks;
+	uint8_t* debug;
 }xi_utils;
 
 void program_state_init(program_state* state);
@@ -60,6 +63,9 @@ void xi_init(program_state* state);
 void xi_deinit(program_state* state);
 void xi_run_system_group(program_state* state, uint32_t group);
 void xi_run_system_group_queued(program_state* state, uint32_t group);
+
+void xi_entities_spawn(xi_utils* xi);
+void xi_persistent(SYSTEM_ARG_REQUIREMENTS);
 
 void tick_update(program_state* state);
 void tick_reset(program_state* state);

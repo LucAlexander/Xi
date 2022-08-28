@@ -75,6 +75,7 @@ SYSTEM(clickable_s){
 }
 
 SYSTEM(draw_clickable_s){
+	DEBUG_SYSTEM;
 	ARG(v2* position, POSITION_C);
 	ARG(clickable_t* button, CLICKABLE_C);
 	view v = renderGetView(xi->graphics);
@@ -97,6 +98,7 @@ SYSTEM(animate_s){
 }
 
 SYSTEM(draw_entity_colliders_s){
+	DEBUG_SYSTEM;
 	ARG(v2* pos, POSITION_C);
 	ARG(v4* mask, COLLIDER_C);
 	v4 translated = {
@@ -112,6 +114,7 @@ SYSTEM(draw_entity_colliders_s){
 }
 
 SYSTEM(draw_world_colliders_s){
+	DEBUG_SYSTEM;
 	renderSetColor(xi->graphics, 255, 255, 255, 255);
 	spacial_quadtree_node_t* root = xi->colliders;
 	vquadnode_t q = vquadnode_tInit();

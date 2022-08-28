@@ -3,6 +3,8 @@
 
 #include "systems.h"
 
+#define DEBUG_SYSTEM if (!*xi->debug) return
+
 struct entity_data;
 
 SYSTEM(forces_s);

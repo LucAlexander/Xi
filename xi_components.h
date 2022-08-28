@@ -14,7 +14,7 @@
 	CLICKABLE_C,/*clickable_t*/\
 	TEXT_C,/*text_node_t*/\
 	COLLIDER_C,/*v4*/\
-	SINGLE_RUN_CONTROLLER_C/*uint8_t*/
+	SINGLE_RUN_CONTROLLER_C/*uint8_t*/\
 
 #define COMPONENT_SIZES\
 	sizeof(v2),\

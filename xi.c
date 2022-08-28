@@ -30,6 +30,7 @@ void program_state_init(program_state* state){
 	ecs_init(&state->ecs, COMPONENT_COUNT, COMPONENT_SIZES);
 	state->colliders = generate_collision_mask(XI_SPRITE"collision_mask_advanced.png");
 	state->project = NULL;
+	state->debug = 0;
 }
 
 void program_state_deinit(program_state* state){
@@ -53,7 +54,8 @@ xi_utils construct_xi_utils(program_state* state){
 		&state->ecs,
 		state->colliders,
 		state->project,
-		state->tick
+		state->tick,
+		&state->debug
 	};
 	return xi;
 }
@@ -65,8 +67,24 @@ void xi_init(program_state* state){
 	setFont(&state->graphics, "default");
 	std_systems(state);
 	xi_utils xi = construct_xi_utils(state);
+	xi_entities_spawn(&xi);
 	xisetup(&xi);
 	xistart(&xi);
+}
+
+void xi_persistent(SYSTEM_ARG_REQUIREMENTS){
+	if (keyPressed(xi->user_input, "`") ){
+		*xi->debug = !*xi->debug;
+	}
+}
+
+void xi_entities_spawn(xi_utils* xi){
+	uint32_t single_runner = entity_create(xi->ecs);
+	uint8_t rc = 0;
+	logic_t logic;
+	logic.f = xi_persistent;
+	component_add(xi->ecs, single_runner, SINGLE_RUN_CONTROLLER_C, &rc);
+	component_add(xi->ecs, single_runner, BEHAVIOR_C, &logic);
 }
 
 void xi_deinit(program_state* state){
@@ -104,6 +122,7 @@ void std_systems(program_state* state){
 	system_add(state, system_init(draw_world_colliders_s, 1, SINGLE_RUN_CONTROLLER_C), XI_STATE_RENDER);
 	system_add(state, system_init(draw_entity_colliders_s, 2, POSITION_C, COLLIDER_C), XI_STATE_RENDER);
 	system_add(state, system_init(draw_clickable_s, 2, POSITION_C, CLICKABLE_C), XI_STATE_RENDER);
+
 	system_add(state, system_init(text_s, 2, POSITION_C, TEXT_C), XI_STATE_RENDER);
 }
 
