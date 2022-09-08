@@ -1,7 +1,7 @@
 CC=gcc
 CCWIN=x86_64-w64-mingw32-gcc
 WINFLAGS=-lmingw32
-CFLAGS=-lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_image -lSDL2_mixer -lm
+CFLAGS=-lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_image -lSDL2_mixer -lm -ftrapv -O3
 CDEBUGFLAGS=-Wall -g
 WINLIBS=-ISDL2/include/ -LSDL2/lib/
 OUT=xiprog

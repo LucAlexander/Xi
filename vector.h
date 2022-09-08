@@ -80,10 +80,6 @@ void CvectorClear(Cvector* vec);
  \
 	void typename##Reserve(typename* vec, uint32_t places); \
  \
-	type typename##Get(typename* vec, uint32_t index); \
- \
-	type typename##GetTruested(typename* vec, uint32_t index); \
- \
  	type* typename##Ref(typename* vec, uint32_t index); \
  \
  	type* typename##RefTrusted(typename* vec, uint32_t index); \
@@ -93,10 +89,6 @@ void CvectorClear(Cvector* vec);
  	void typename##SetTrusted(typename* vec, uint32_t index, type item); \
  \
 	void typename##Shift(typename* vec, uint32_t index); \
- \
-	type typename##RemoveInOrder(typename* vec, uint32_t index); \
- \
-	type typename##Remove(typename* vec, uint32_t index); \
  \
 	type typename##Pop(typename* vec); \
  \
@@ -194,23 +186,11 @@ void CvectorClear(Cvector* vec);
 		} \
 	} \
  \
-	type typename##Get(typename* vec, uint32_t index){ \
-		type res; \
-		if (index < vec->size){ \
-			res = vec->data[index]; \
-		} \
-		return res; \
-	} \
- \
  	type* typename##Ref(typename* vec, uint32_t index){ \
 		if (index < vec->size){ \
 			return &(vec->data[index]); \
 		} \
 		return NULL; \
-	} \
- \
-	type typename##GetTrusted(typename* vec, uint32_t index){ \
-		return vec->data[index]; \
 	} \
  \
  	type* typename##RefTrusted(typename* vec, uint32_t index){ \
@@ -235,21 +215,15 @@ void CvectorClear(Cvector* vec);
 	} \
  \
 	type typename##RemoveInOrder(typename* vec, uint32_t index){ \
-		type res; \
-		if (index < vec->size){ \
-			res = vec->data[index]; \
-			vec->size--; \
-			typename##Shift(vec, index); \
-		} \
+		type res = vec->data[index]; \
+		vec->size--; \
+		typename##Shift(vec, index); \
 		return res; \
 	} \
 \
 	type typename##Remove(typename* vec, uint32_t index){ \
-		type res; \
-		if (index < vec->size){ \
-			res = vec->data[index]; \
-			vec->data[index] = vec->data[--vec->size]; \
-		} \
+		type res = vec->data[index]; \
+		vec->data[index] = vec->data[--vec->size]; \
 		return res; \
 	} \
  \

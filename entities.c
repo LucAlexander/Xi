@@ -120,7 +120,7 @@ uint8_t entity_exists_mask(entity_data* d, uint8_t exact, uint64_t mask){
 }
 
 uint8_t entity_exists(entity_data* d, uint8_t exact, uint32_t n, ...){
-	uint64_t mask;
+	uint64_t mask = 0;
 	va_list v;
 	va_start(v, n);
 	uint32_t i;
@@ -149,7 +149,7 @@ uint32_t entity_nearest_mask(entity_data* d, v2 pos, uint8_t exact, uint64_t mas
 }
 
 uint32_t entity_nearest(entity_data* d, v2 pos, uint8_t exact, uint32_t n, ...){
-	uint64_t mask;
+	uint64_t mask = 0;
 	va_list v;
 	va_start(v, n);
 	uint32_t i;
@@ -180,7 +180,7 @@ uint32_t entity_nearest_mask_n(entity_data* d, v2 pos, uint32_t n, uint8_t exact
 }
 
 uint32_t entity_nearest_n(entity_data* d, v2 pos, uint8_t exact, uint32_t n, uint32_t m, ...){
-	uint64_t mask;
+	uint64_t mask = 0;
 	va_list v;
 	va_start(v, m);
 	uint32_t i;
@@ -209,7 +209,7 @@ uint32_t entity_furthest_mask(entity_data* d, v2 pos, uint8_t exact, uint64_t ma
 }
 
 uint32_t entity_furthest(entity_data* d, v2 pos, uint8_t exact, uint32_t n, ...){
-	uint64_t mask;
+	uint64_t mask = 0;
 	va_list v;
 	va_start(v, n);
 	uint32_t i;
@@ -240,7 +240,7 @@ uint32_t entity_furthest_mask_n(entity_data* d, v2 pos, uint32_t n, uint8_t exac
 }
 
 uint32_t entity_furthest_n(entity_data* d, v2 pos, uint8_t exact, uint32_t n, uint32_t m, ...){
-	uint64_t mask;
+	uint64_t mask = 0;
 	va_list v;
 	va_start(v, m);
 	uint32_t i;
