@@ -88,6 +88,10 @@ void CvectorClear(Cvector* vec);
  \
  	void typename##SetTrusted(typename* vec, uint32_t index, type item); \
  \
+	type typename##RemoveInOrder(typename* vec, uint32_t index); \
+ \
+	type typename##Remove(typename* vec, uint32_t index); \
+ \
 	void typename##Shift(typename* vec, uint32_t index); \
  \
 	type typename##Pop(typename* vec); \
