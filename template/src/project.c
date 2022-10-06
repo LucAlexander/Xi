@@ -6,7 +6,7 @@
 void project_structs_init(xi_utils* xi){	
 	project_structs* project = malloc(sizeof(project_structs));
 	xi->project = project;
-	// initialize instances of game structures here
+	// initialize instances of structures here
 }
 
 void xisetup(xi_utils* xi){
@@ -14,5 +14,5 @@ void xisetup(xi_utils* xi){
 }
 
 void xistart(xi_utils* xi){
-	// setup initial game state here
+	// setup initial state here
 }
