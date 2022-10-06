@@ -6,6 +6,6 @@ output.txt
 SDL2/
 build-win/
 build-linux/
-projects/*
+projects/test/
 plot.py
 ./config/

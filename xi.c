@@ -28,7 +28,8 @@ void program_state_init(program_state* state){
 	audio_init(&state->audio);
 	inputInit(&state->user_input);
 	ecs_init(&state->ecs, COMPONENT_COUNT, COMPONENT_SIZES);
-	state->colliders = generate_collision_mask(XI_SPRITE"collision_mask_advanced.png");
+	//state->colliders = generate_collision_mask(XI_SPRITE"collision_mask_advanced.png"); ssh this is WIP
+	state->colliders = NULL;
 	state->project = NULL;
 	state->debug = 0;
 }

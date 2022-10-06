@@ -8,7 +8,7 @@ OUT=xiprog
 BUILDWIN=build-win/
 BUILDLINUX=build-linux/
 
-PROJECT=demo
+PROJECT=test
 USER_FILES=$(wildcard projects/$(PROJECT)/src/*.h) $(wildcard projects/$(PROJECT)/src/*.c)
 
 project:
@@ -16,7 +16,7 @@ project:
 
 setup-linux:
 	rm -rf $(BUILDLINUX)
-	rm -rf comfig/
+	rm -rf config/
 	mkdir $(BUILDLINUX)
 	mkdir $(BUILDLINUX)./bin/
 	cp -r projects/${PROJECT}/src/config/ .

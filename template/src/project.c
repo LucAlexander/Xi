@@ -1,10 +1,7 @@
 #include <stdio.h>
 
-#include "../../../xi.h"
-#include "../../../xi_config.h"
-
 #include "project.h"
-#include "project-components.h"
+#include "xi_engine.h"
 
 void project_structs_init(xi_utils* xi){	
 	project_structs* project = malloc(sizeof(project_structs));

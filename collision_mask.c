@@ -68,6 +68,7 @@ spacial_quadtree_node_t* partition_pixel_color_data_to_quadtree(uint32_t x_start
 }
 
 void spacial_quadtree_node_free(spacial_quadtree_node_t* root){
+	if (root == NULL) return;
 	if (root->state != INTERNAL_NODE){
 		free(root);
 		root = NULL;
