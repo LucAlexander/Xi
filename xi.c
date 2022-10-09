@@ -69,7 +69,7 @@ void xi_init(program_state* state){
 	std_systems(state);
 	xi_utils xi = construct_xi_utils(state);
 	xi_entities_spawn(&xi);
-	xisetup(&xi);
+	xisetup(state, &xi);
 	xistart(&xi);
 }
 

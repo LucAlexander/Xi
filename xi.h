@@ -80,7 +80,7 @@ xi_utils construct_xi_utils(program_state*);
 void std_systems(program_state* state);
 void system_add(program_state* state, struct system_t, PROGRAM_STATE);
 
-void xisetup(xi_utils*);
+void xisetup(program_state*, xi_utils* xi);
 void xistart(xi_utils*);
 
 #endif
