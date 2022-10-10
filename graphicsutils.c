@@ -39,6 +39,7 @@ void graphicsInit(GraphicsHandler* ghandle, uint16_t width, uint16_t height, con
 	fontHandlerInit(ghandle);
 	ghandle->animations = AnimationsInit();
 	ghandle->render_order = renderq_init();
+	SDL_SetRenderDrawBlendMode(ghandle->renderer, SDL_BLENDMODE_BLEND);
 }
 
 void graphicsClose(GraphicsHandler* ghandle){
@@ -441,13 +442,14 @@ void fontHandlerInit(GraphicsHandler* ghandle){
 void loadFont(GraphicsHandler* ghandle, const char* src, const char* name){
 	TTF_Font* f = FontMapGet(&(ghandle->fonts.list), name).val;
 	if (f != NULL){
-		printf("[!] Unable to load font \'%s\'\n%s\n", src, SDL_GetError());
+		printf("[!] font with name \'%s\' already loaded\n%s\n", src, SDL_GetError());
 		return;
 	}
-	f = TTF_OpenFont(src, 16);
+	f = TTF_OpenFont(src, 8);
 	if (f == NULL){
 		TTF_CloseFont(f);
 		f = NULL;
+		printf("[!] Unable to load font \'%s\'\n%s\n", src, SDL_GetError());
 		return;
 	}
 	FontMapPush(&(ghandle->fonts.list), name, f);
@@ -537,6 +539,16 @@ uint32_t getTextHeight(GraphicsHandler* ghandle, const char* c){
 
 void queryTextSize(GraphicsHandler* ghandle, const char* text, int32_t* w, int32_t* h){
 	TTF_SizeText(ghandle->fonts.fnt, text, w, h);
+}
+
+void setFontKerning(GraphicsHandler* ghandle, uint32_t kerning){
+	if (ghandle->fonts.fnt == NULL) return;
+	TTF_SetFontKerning(ghandle->fonts.fnt, kerning);
+}
+
+uint32_t getFontKerning(GraphicsHandler* ghandle){
+	if (ghandle->fonts.fnt == NULL) return 0;
+	return TTF_GetFontKerning(ghandle->fonts.fnt);
 }
 
 void texture_arena_release(GraphicsHandler* ghandle){

@@ -195,6 +195,9 @@ uint32_t getTextWidth(GraphicsHandler* ghandle, const char* c);
 uint32_t getTextHeight(GraphicsHandler* ghandle, const char* c);
 void queryTextSize(GraphicsHandler* ghandle, const char* text, int32_t* w, int32_t* h);
 
+void setFontKerning(GraphicsHandler* ghandle, uint32_t kerning);
+uint32_t getFontKerning(GraphicsHandler* ghandle);
+
 void fontHandlerInit(GraphicsHandler* ghandle);
 void loadFont(GraphicsHandler* ghandle, const char* src, const char* name);
 void setFont(GraphicsHandler* ghandle, char* fnt);
