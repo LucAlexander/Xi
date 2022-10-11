@@ -71,6 +71,7 @@ void xi_init(program_state* state){
 	xi_entities_spawn(&xi);
 	xisetup(state, &xi);
 	xistart(&xi);
+	state->project = xi.project;
 }
 
 void xi_persistent(SYSTEM_ARG_REQUIREMENTS){
@@ -175,11 +176,11 @@ void do_frame_try(program_state* state){
 	xi_run_system_group(state, XI_STATE_UPDATE_PRE);
 	xi_run_system_group(state, XI_STATE_UPDATE);
 	xi_run_system_group(state, XI_STATE_UPDATE_POST);
-	newInputFrame(&state->user_input);
 	renderClear(&state->graphics);
 	renderSetColor(&state->graphics, 0, 0, 0, 255);
 	xi_run_system_group_queued(state, XI_STATE_RENDER);
 	renderFlip(&state->graphics);
+	newInputFrame(&state->user_input);
 	tick_reset(state);
 }
 

@@ -445,7 +445,7 @@ void loadFont(GraphicsHandler* ghandle, const char* src, const char* name){
 		printf("[!] font with name \'%s\' already loaded\n%s\n", src, SDL_GetError());
 		return;
 	}
-	f = TTF_OpenFont(src, 8);
+	f = TTF_OpenFont(src, 16);
 	if (f == NULL){
 		TTF_CloseFont(f);
 		f = NULL;
