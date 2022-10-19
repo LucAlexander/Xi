@@ -47,6 +47,8 @@ uint8_t keyHeld(input* inp, const char*);
 uint8_t keyPressed(input* inp, const char*);
 uint8_t keyReleased(input* inp, const char*);
 
+void keystream(input* inp, char* r, char* s);
+
 void mouseInterrupt(input* inp, uint8_t);
 void keyInterrupt(input* inp, const char*);
 

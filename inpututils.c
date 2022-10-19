@@ -105,3 +105,22 @@ void keyInterrupt(input* inp, const char* key){
 	inp->pressedKeys[k] = 0;
 	inp->heldKeys[k] = 0;
 }
+
+void keystream(input* inp, char* r, char* s){
+	uint32_t index = 0;
+	strcpy(r, "");
+	uint8_t n = strlen(s);
+	uint8_t i = 0;
+	char p;
+	while (i<n){
+		p = s[i];
+		char c[2];
+		c[0] = p;
+		c[1] = '\0';
+		if (keyPressed(inp, c)){
+			r[index++] = p;
+		}
+		i++;
+	}
+	r[index] = '\0';
+}

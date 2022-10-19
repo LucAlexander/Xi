@@ -11,6 +11,8 @@
 
 #include <inttypes.h>
 
+#define SRC 0
+
 struct system_t;
 struct project_structs;
 
