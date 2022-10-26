@@ -101,7 +101,7 @@ float distancePointV2(v2 a, v2 b){
 
 float directionPoint(float x, float y, float xx, float yy){
 	float res = (atan2(yy-y, xx-x)*180)/PI;
-	return (yy > y) ? (360-res) : res;
+	return (yy > y) ? (360-res) : -res;
 }
 
 float directionPointV2(v2 a, v2 b){
