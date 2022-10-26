@@ -9,7 +9,8 @@ void project_structs_init(xi_utils* xi){
 	// initialize instances of structures here
 }
 
-void xisetup(xi_utils* xi){
+void xisetup(program_state* state, xi_utils* xi){
+	project_structs_init(xi);
 	// register your systems here
 }
 

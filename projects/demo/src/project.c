@@ -9,7 +9,7 @@ void project_structs_init(xi_utils* xi){
 	// initialize instances of game structures here
 }
 
-void xisetup(xi_utils* xi){
+void xisetup(program_state* state, xi_utils* xi){
 	// register your systems here
 }
 
