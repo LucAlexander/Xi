@@ -11,12 +11,14 @@
 #include "systems.h"
 
 VECTOR_SOURCE(su32_t, uint32_t)
+VECTOR_SOURCE(vf32_t, float)
 HASHMAP_SOURCE(mu32u32_t, uint32_t, uint32_t, hashI)
 
 void ecs_init(entity_data* d, uint32_t n, ...){
 	d->entities = 0;
 	d->size = 0;
 	d->stack = su32_tInit();
+	d->signals = vf32_tInit();
 	va_list v;
 	va_start(v, n);
 	uint32_t i, offset = 0;
@@ -94,6 +96,7 @@ void ecs_clear(entity_data* d){
 
 void ecs_deinit(entity_data* d){
 	su32_tFree(&d->stack);
+	vf32_tFree(&d->signals);
 	free(d->masks);
 	free(d->data);
 	free(d->flags);
@@ -254,3 +257,28 @@ uint32_t entity_furthest_n(entity_data* d, v2 pos, uint8_t exact, uint32_t n, ui
 void entity_add_flag(entity_data* d, uint32_t eid, uint32_t flag){
 	d->flags[eid] = bit_on(d->flags[eid], flag);
 }
+
+void entity_create_signal(entity_data* d, uint32_t signal){
+	if (signal != d->signals.size) return;
+	vf32_tPushBack(&d->signals, 0);
+}
+
+void entity_set_signal(entity_data* d, uint32_t signal, float value){
+	if (signal >= d->signals.size) return;
+	d->signals.data[signal] = value;
+}
+
+float entity_signal_check(entity_data* d, uint32_t signal){
+	if (signal >= d->signals.size) return 0;
+	return d->signals.data[signal];
+}
+
+float entity_receive_signal(entity_data* d, uint32_t signal){
+	if (signal >= d->signals.size) return 0;
+	float v = d->signals.data[signal];
+	if (v!=0){
+		d->signals.data[signal] = 0;
+	}
+	return v;
+}
+

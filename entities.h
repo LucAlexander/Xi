@@ -8,6 +8,7 @@
 #define COMPONENT_LIMIT 64
 
 VECTOR(su32_t, uint32_t)
+VECTOR(vf32_t, float)
 HASHMAP(mu32u32_t, uint32_t, uint32_t)
 
 struct v2;
@@ -21,6 +22,7 @@ typedef struct entity_data{
 	void* data;
 	uint32_t entities;
 	su32_t stack;
+	vf32_t signals;
 	uint64_t* masks;
 	uint64_t* flags;
 	uint16_t* layers;
@@ -56,5 +58,10 @@ uint32_t entity_create(entity_data* d);
 void entity_destroy(entity_data* d, uint32_t eid);
 
 uint8_t entity_exact_mask_logic(entity_data* d, uint32_t eid, uint8_t exact, uint64_t reference, uint64_t candidate);
+
+void entity_create_signal(entity_data* d, uint32_t signal);
+void entity_set_signal(entity_data* d, uint32_t signal, float value);
+float entity_signal_check(entity_data* d, uint32_t signal);
+float entity_receive_signal(entity_data* d, uint32_t signal);
 
 #endif
