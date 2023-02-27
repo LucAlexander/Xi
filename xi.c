@@ -148,30 +148,14 @@ void xi_run_system_group_queued(program_state* state, uint32_t group){
 	}
 }
 
-void tick_update(program_state* state){
-	state->tick = (SDL_GetTicks()-state->base_time);
-}
-
 void tick_reset(program_state* state){
+	state->tick = SDL_GetTicks()-state->base_time;
 	state->base_time = SDL_GetTicks();
-	state->tick = 0;
-}
-
-uint8_t tick(uint32_t ticks){
-	return ticks >= TICK_TIME;
-}
-
-uint32_t frame_time(program_state* state){
-	return state->tick;
 }
 
 void do_frame_try(program_state* state){
 	while (SDL_PollEvent(&state->event)){
 		read_user_input(state);
-	}
-	tick_update(state);
-	if (!tick(state->tick)){
-		return;
 	}
 	xi_run_system_group(state, XI_STATE_UPDATE_PRE);
 	xi_run_system_group(state, XI_STATE_UPDATE);
