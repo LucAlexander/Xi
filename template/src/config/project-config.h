@@ -14,7 +14,7 @@
 #define Q_SECOND SECOND/4
 
 #define TICKS_PER_SECOND 60
-#define TICK_TIME SECOND/60
+#define TICK_TIME SECOND/TICKS_PER_SECOND
 
 #define XI_FONT "../fnt/"
 #define XI_SPRITE "../spr/"
