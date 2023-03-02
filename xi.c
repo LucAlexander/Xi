@@ -146,6 +146,19 @@ void xi_run_system_group_queued(program_state* state, uint32_t group){
 	for (i = 0;i<system_list.size;++i){
 		system_run_queued(system_list.data[i], &xi, &xi.graphics->render_order);
 	}
+	uint8_t gui = 0;
+	view original = renderGetView(xi.graphics);
+	while (xi.graphics->render_order.size != 0){
+		if ((renderq_min(&xi.graphics->render_order) >= RENDER_GUI_DEPTH) &&( !gui)){
+			renderSetViewAbsolute(xi.graphics);
+			gui = 1;
+		}
+		renderq_entry_t data = renderq_pop(&xi.graphics->render_order);
+		data.f(data.xi, data.id);
+	}
+	if (gui){
+		renderSetView(xi.graphics, original);
+	}
 }
 
 void tick_reset(program_state* state){

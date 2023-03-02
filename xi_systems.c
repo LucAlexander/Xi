@@ -114,6 +114,7 @@ SYSTEM(draw_entity_colliders_s){
 }
 
 SYSTEM(draw_world_colliders_s){
+	return;
 	DEBUG_SYSTEM;
 	renderSetColor(xi->graphics, 255, 255, 255, 255);
 	spacial_quadtree_node_t* root = xi->colliders;
@@ -139,6 +140,7 @@ SYSTEM(draw_world_colliders_s){
 }
 
 SYSTEM(solid_collision_s){
+	return;
 	ARG(v2* pos, POSITION_C);
 	ARG(v2* forces, FORCES_C);
 	ARG(v4* mask, COLLIDER_C);

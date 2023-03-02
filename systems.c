@@ -121,18 +121,4 @@ void system_run_queued(system_t s, xi_utils* xi, renderq_t* render_order){
 			renderq_insert(render_order, entity_get_layer(xi->ecs, id), args);
 		}
 	}
-	uint8_t gui = 0;
-	view original = renderGetView(xi->graphics);
-	while (render_order->size != 0){
-		if ((renderq_min(render_order) >= RENDER_GUI_DEPTH) &&( !gui)){
-			renderSetViewAbsolute(xi->graphics);
-			gui = 1;
-		}
-		renderq_entry_t data = renderq_pop(render_order);
-		data.f(data.xi, data.id);
-	}
-	if (gui){
-		renderSetView(xi->graphics, original);
-	}
-
 }
