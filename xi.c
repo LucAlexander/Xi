@@ -56,7 +56,8 @@ xi_utils construct_xi_utils(program_state* state){
 		state->colliders,
 		state->project,
 		state->tick,
-		&state->debug
+		&state->debug,
+		&state->running
 	};
 	return xi;
 }
@@ -209,6 +210,10 @@ void read_user_input(program_state* state){
 			mouseMoveEvent(&state->user_input, state->event.motion.x, state->event.motion.y);
 			return;
 	}
+}
+
+void xi_quit(xi_utils* xi){
+	*xi->running = 0;
 }
 
 int main(int argc, char** argv){

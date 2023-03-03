@@ -54,6 +54,7 @@ typedef struct xi_utils{
 	struct project_structs* project;
 	uint32_t ticks;
 	uint8_t* debug;
+	uint8_t* running;
 }xi_utils;
 
 void program_state_init(program_state* state);
@@ -81,5 +82,7 @@ void system_add(program_state* state, struct system_t, PROGRAM_STATE);
 
 void xisetup(program_state*, xi_utils* xi);
 void xistart(xi_utils*);
+
+void xi_quit(xi_utils* xi);
 
 #endif
