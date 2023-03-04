@@ -12,6 +12,10 @@
 
 #include "systems.h"
 
+#ifdef __EMSCRIPTEN__
+#include "emscripten.h"
+#endif
+
 VECTOR_SOURCE(vsys_t, system_t)
 HASHMAP_SOURCE(mu32u8_t, uint32_t, uint8_t, hashI)
 
@@ -167,7 +171,12 @@ void tick_reset(program_state* state){
 	state->base_time = SDL_GetTicks();
 }
 
+#ifdef __EMSCRIPTEN__
+void do_frame_try(void* state_arg){
+	program_state* state = state_arg;
+#else
 void do_frame_try(program_state* state){
+#endif
 	while (SDL_PollEvent(&state->event)){
 		read_user_input(state);
 	}
@@ -180,6 +189,12 @@ void do_frame_try(program_state* state){
 	renderFlip(&state->graphics);
 	newInputFrame(&state->user_input);
 	tick_reset(state);
+#ifdef __EMSCRIPTEN__
+	if (state->running) return;
+	xi_deinit(state);
+	program_state_deinit(state);
+	emscripten_cancel_main_loop();
+#endif
 }
 
 void read_user_input(program_state* state){
@@ -221,11 +236,16 @@ int main(int argc, char** argv){
 	program_state_init(&state);
 	xi_init(&state);
 	tick_reset(&state);
+#ifdef __EMSCRIPTEN__
+	emscripten_set_main_loop_arg(do_frame_try, &state, 0, 1);
+#else
 	while (state.running){
 		do_frame_try(&state);
 	}
 	xi_deinit(&state);
 	program_state_deinit(&state);
+
+#endif
 	return 0;
 }
 

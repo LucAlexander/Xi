@@ -72,7 +72,11 @@ void xi_persistent(SYSTEM_ARG_REQUIREMENTS);
 
 void tick_reset(program_state* state);
 
+#ifdef __EMSCRIPTEN__
+void do_frame_try(void* state);
+#else
 void do_frame_try(program_state* state);
+#endif
 void read_user_input(program_state* state);
 
 xi_utils construct_xi_utils(program_state*);

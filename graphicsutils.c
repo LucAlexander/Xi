@@ -333,7 +333,7 @@ void progress_animation(GraphicsHandler* ghandle, animator_t* animator){
 		animator->index++;
 		return;
 	}
-	if ((animator->index == animation.z-1)){
+	if (animator->index == animation.z-1){
 		if (!bit_check(animator->flags, 2)){
 			return;
 		}
