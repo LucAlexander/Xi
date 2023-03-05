@@ -69,7 +69,11 @@ xi_utils construct_xi_utils(program_state* state){
 void xi_init(program_state* state){
 	state->state = XI_STATE_INIT;
 	srand(time(NULL));
+#ifdef __EMSCRIPTEN__
+	loadFont(&state->graphics, "./fnt/arcade.TTF", "default");
+#else
 	loadFont(&state->graphics, "../fnt/arcade.TTF", "default");
+#endif
 	setFont(&state->graphics, "default");
 	std_systems(state);
 	xi_utils xi = construct_xi_utils(state);

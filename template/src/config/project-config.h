@@ -13,8 +13,14 @@
 #define H_SECOND SECOND/2
 #define Q_SECOND SECOND/4
 
+#ifdef __EMSCRIPTEN__
+#define XI_FONT "./fnt/"
+#define XI_SPRITE "./spr/"
+#define XI_SOUND "./snd/"
+#else
 #define XI_FONT "../fnt/"
 #define XI_SPRITE "../spr/"
 #define XI_SOUND "../snd/"
+#endif
 
 #endif

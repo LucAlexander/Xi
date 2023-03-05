@@ -15,7 +15,8 @@ BUILDWASM=build-wasm/
 
 PROJECT=xui
 USER_FILES=$(wildcard projects/$(PROJECT)/src/*.h) $(wildcard projects/$(PROJECT)/src/*.c)
-WASM_USER_FILES = $(wildcard projects/$(PROJECT)/src/*.c)
+WASM_USER_FILES=$(wildcard projects/$(PROJECT)/src/*.c)
+WASM_ASSETS=--preload-file fnt/ --preload-file spr/ --preload-file snd/
 
 project:
 	cp -r template/ projects/$(PROJECT)
@@ -24,34 +25,54 @@ setup-wasm:
 	rm -rf $(BUILDWASM)
 	rm -rf config/
 	mkdir $(BUILDWASM)
-	mkdir $(BUILDWASM)./bin/
 	cp -r projects/$(PROJECT)/src/config/ .
+	cp -r projects/$(PROJECT)/fnt/ .
+	cp -r projects/$(PROJECT)/spr/ .
+	cp -r projects/$(PROJECT)/snd/ .
 
 compile-wasm:
 	make setup-wasm
-	$(CCWASM) $(wildcard *.c) $(WASM_USER_FILES) $(WASMLIBS) -o $(OUT).html --preload-file projects/$(PROJECT)/ --use-preload-plugins
-	mv $(OUT).html $(BUILDWASM)./bin/
-	mv $(OUT).js $(BUILDWASM)./bin/
-	mv $(OUT).wasm $(BUILDWASM)./bin/
-	mv $(OUT).data $(BUILDWASM)./bin/
-	cp -r projects/$(PROJECT)/fnt/ $(BUILDWASM)
-	cp -r projects/$(PROJECT)/spr/ $(BUILDWASM)
-	cp -r projects/$(PROJECT)/snd/ $(BUILDWASM)
-	echo "python3 -m http.server 7000" > $(BUILDWASM)./bin/run.sh
-	chmod +x $(BUILDWASM)./bin/run.sh
+	$(CCWASM) $(wildcard *.c) $(WASM_USER_FILES) $(WASMLIBS) -o $(OUT).html $(WASM_ASSETS) --use-preload-plugins
+	mv fnt $(BUILDWASM)
+	mv spr $(BUILDWASM)
+	mv snd $(BUILDWASM)
+	mv $(OUT).html $(BUILDWASM)
+	mv $(OUT).js $(BUILDWASM)
+	mv $(OUT).wasm $(BUILDWASM)
+	mv $(OUT).data $(BUILDWASM)
+	echo "python3 -m http.server 7000" > $(BUILDWASM)testserver.sh
+	chmod +x $(BUILDWASM)testserver.sh
 
 debug-wasm:
 	make setup-wasm
-	$(CCWASM) $(wildcard *.c) $(WASM_USER_FILES) $(WASMLIBS) $(CDEBUGFLAGS) -o $(OUT)-debug.html --preload-file projects/$(PROJECT)/ --use-preload-plugins
-	mv $(OUT)-debug.html $(BUILDWASM)./bin/
-	mv $(OUT)-debug.js $(BUILDWASM)./bin/
-	mv $(OUT)-debug.wasm $(BUILDWASM)./bin/
-	mv $(OUT)-debug.data $(BUILDWASM)./bin/
-	cp -r projects/$(PROJECT)/fnt/ $(BUILDWASM)
-	cp -r projects/$(PROJECT)/spr/ $(BUILDWASM)
-	cp -r projects/$(PROJECT)/snd/ $(BUILDWASM)
-	echo "python3 -m http.server 7000" > $(BUILDWASM)./bin/run.sh
-	chmod +x $(BUILDWASM)./bin/run.sh
+	$(CCWASM) $(wildcard *.c) $(WASM_USER_FILES) $(WASMLIBS) $(CDEBUGFLAGS) -o $(OUT)-debug.html $(WASM_ASSETS) --use-preload-plugins
+	mv fnt $(BUILDWASM)
+	mv spr $(BUILDWASM)
+	mv snd $(BUILDWASM)
+	mv $(OUT)-debug.html $(BUILDWASM)
+	mv $(OUT)-debug.js $(BUILDWASM)
+	mv $(OUT)-debug.wasm $(BUILDWASM)
+	mv $(OUT)-debug.data $(BUILDWASM)
+	echo "python3 -m http.server 7000" > $(BUILDWASM)testserver.sh
+	chmod +x $(BUILDWASM)testserver.sh
+
+WASM_ASSETS_TEST=--preload-file font/arcade.TTF
+
+test-wasm:
+	$(CCWASM) $(wildcard *.c) $(WASM_USER_FILES) $(WASMLIBS) $(CDEBUGFLAGS) -o $(OUT)-test.html $(WASM_ASSETS_TEST) --use-preload-plugins
+	echo "python3 -m http.server 7000" > run.sh
+	chmod +x run.sh
+	mkdir build-test
+	mv xiprog-test.html build-test/
+	mv xiprog-test.data build-test/
+	mv xiprog-test.wasm build-test/
+	mv xiprog-test.js build-test/
+	mv run.sh build-test/
+	mv font build-test/
+
+test-clean:
+	mv build-test/font .
+	rm -rf build-test/
 
 setup-linux:
 	rm -rf $(BUILDLINUX)
