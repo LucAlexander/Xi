@@ -32,7 +32,7 @@ setup-wasm:
 
 compile-wasm:
 	make setup-wasm
-	$(CCWASM) $(wildcard *.c) $(WASM_USER_FILES) $(WASMLIBS) -o $(OUT).html $(WASM_ASSETS) --use-preload-plugins
+	$(CCWASM) $(wildcard *.c) $(WASM_USER_FILES) $(WASMLIBS) -o $(OUT).html $(WASM_ASSETS) --use-preload-plugins --shell-file wasm_template.html
 	mv fnt $(BUILDWASM)
 	mv spr $(BUILDWASM)
 	mv snd $(BUILDWASM)
@@ -45,7 +45,7 @@ compile-wasm:
 
 debug-wasm:
 	make setup-wasm
-	$(CCWASM) $(wildcard *.c) $(WASM_USER_FILES) $(WASMLIBS) $(CDEBUGFLAGS) -o $(OUT)-debug.html $(WASM_ASSETS) --use-preload-plugins
+	$(CCWASM) $(wildcard *.c) $(WASM_USER_FILES) $(WASMLIBS) $(CDEBUGFLAGS) -o $(OUT)-debug.html $(WASM_ASSETS) --use-preload-plugins --shell-file wasm_template_debug.html
 	mv fnt $(BUILDWASM)
 	mv spr $(BUILDWASM)
 	mv snd $(BUILDWASM)
