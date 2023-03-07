@@ -4,7 +4,7 @@
 Ξ uses an Entity Component System (ECS) to achieve its speed. The proof of concept precursor to this utility was [Locality](https://github.com/LucAlexander/Locality), which was developed as a semester project for university, this precursor however used a slightly different architecture and ECS, which while slower, was more memory efficient. This version is faster, lighter, and uses an arena allocator to deal with memory management.
 
 ## Current Development
-Until now i've been using SDL2 to do all media features of the software engine. But after optimizing the internal architecture, SDL2's rendering specification has become the only bottleneck in an otherwise very fast software solution. Im slowly trying to replace SDL2 with OpenGl, which should be able to hangle rendering and user input, however audio capabilities will have to come later. Aside from being much faster, OpenGL also has shader support, which im excited for. In the meantime however, Open Gl will have to wait, as there are bigger things in life than a high standard of software quality.
+Xi is still in development, and while the eventual goal is to have it in a state where software can be developed with it, starting projects on the engine now means risking that future engine versions break projects that rely on old features.
 
 ## Documentation
 
@@ -18,11 +18,14 @@ To create a new project, first change this variable assignment to your new proje
 
 **NOTE** The development environment is currently setup for linux with cross compilation to windows possible using `x86_64-w64-mingw32-gcc`, however to develop on windows, switch the variable `CCWIN` to the correct mingw32 program you have installed and wish to use to compile, such as `gcc` or `g++`.
 
-For woking on linux as intended however, use:
+There is also a wasm compilation target using enscripten's emcc c to wasm compiler.
+
 `make debug-linux` for a debug build compiled for linux,
 `make debug-win` for a cross compiled debug build for windows,
+`make debug-wasm` for a debug web assembly build,
 `make compile-linux` for a release build compiled for linux,
-`make compile-win` for a cross compiled release build for windows.
+`make compile-win` for a cross compiled release build for windows,
+`make compile-was,` for a release web assembly build.
 
 `make debug-all` and `make compile-all` will create debug and compile builds for all target systems.
 
@@ -34,7 +37,7 @@ SDL2 has been included in this repository, so you hopefully dont have to install
 Use `make clean` to remove compiled binaries, as well as generated intermediary compilation files.
 
 ### Navigating a Project
-Projects contain four key directories, lets say we have a project called psi which exists as a standard project in the `projects` directory.
+Projects contain four key directories, lets say we have a project called `psi` which exists as a standard project in the `projects` directory.
 `psi/fnt` will contain font files, such as (`.ttf`) truetype fonts.
 `psi/snd` will contain sound files for sound effects and music, such as `.wav` files.
 `psi/spr` will contain sprites/images, such as `.png` files.
@@ -57,7 +60,7 @@ is where the struct defined in `project.h` is instantiated and registered by the
 
 The next function:
 ```c
-void xisetup(xi_utils* xi){
+void xisetup(program_state* state){
 	// register your systems here
 }
 
