@@ -3,6 +3,7 @@ VLC.sh
 output.txt
 build-win/
 build-linux/
-projects/test/
+projects/
 plot.py
-./config/
+config
+build-*
