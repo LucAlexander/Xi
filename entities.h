@@ -4,7 +4,7 @@
 #include "vector.h"
 #include "hashMap.h"
 
-#define ENTITY_LIMIT 16192
+#define ENTITY_LIMIT 1024
 #define COMPONENT_LIMIT 128
 
 VECTOR(su32_t, uint32_t)
